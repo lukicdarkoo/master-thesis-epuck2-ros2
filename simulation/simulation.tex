@@ -2,11 +2,20 @@
 \label{chap:simulation}
 \shorttitle{\nameref{chap:simulation}}
 
-As previously explained, one of the project's objective is to create \ac{ros2} interface for e-puck2 simulated robot. Even though creating \ac{ros2} interface for Webots robots is automated later in the project, specific \ac{ros2} driver for the e-puck2 in Webots is created first. For us as developers, creating the specific \ac{ros2} driver was necessary to understand better building blocks that can be generalized later. To readers, this chapter will help better understand improvements brought by generalization (see Chapter \ref{chap:generalization}). It will also show that some devices cannot be generalized, e.g., distance sensors cannot feed the \texttt{LaserScan} topic.
+As previously explained, one of the project's objective is to create \ac{ros2} interface for e-puck2 simulated robot. 
+Even though creating \ac{ros2} interface for Webots robots is automated later in the project, specific \ac{ros2} driver for the e-puck2 in Webots is created first.
+For us as developers, creating the specific \ac{ros2} driver was necessary to understand better building blocks that can be generalized.
+To readers, this chapter will help better understand improvements brought by generalization (see Chapter \ref{chap:generalization}).
+It will also show that some devices cannot be generalized, e.g., distance sensors cannot feed the \texttt{LaserScan} topic.
 
 \section{Introduction}
 
-Before going to implementation details, it is important to understand the controller's concept in Webots and how it fits in \ac{ros2} driver for Webots simulated robots. The Webots controller controls actuators and reads data from sensors available in a robot. The controller is a "brain" of the robot; it makes the robot move and senses the environment. It consists of two parts, the Webots \ac{api}, which communicates with the simulation and user-defined code that uses the \ac{api} to control the robot. The Webots \ac{api} communicates with the Webots simulation through pipes, a type of inter-process communication \cite{kashyian_portable_2008}. Therefore, there are two processes that run independently, Webots controller and Webots simulation (see Fig. \ref{fig:simulation:webots_user_code_and_api}).
+Before going to implementation details, it is important to understand the concept of a controller in Webots and how it fits in \ac{ros2} driver for Webots simulated robots.
+The Webots controller controls actuators and reads data from sensors available in a robot.
+The controller is a "brain" of the robot; it makes the robot move and senses the environment.
+It consists of two parts, the Webots \ac{api}, which communicates with the simulation and user-defined code that uses the \ac{api} to control the robot.
+The Webots \ac{api} communicates with the Webots simulation through pipes, a type of inter-process communication \cite{kashyian_portable_2008}.
+Therefore, there are two processes that run independently, Webots controller and Webots simulation (see Fig. \ref{fig:simulation:webots_user_code_and_api}).
 
 \begin{figure}[H]
     \centering
@@ -15,17 +24,21 @@ Before going to implementation details, it is important to understand the contro
     \label{fig:simulation:webots_user_code_and_api}
 \end{figure}
 
-In this chapter, a logic that performs translation from Webots \ac{api} to \ac{ros2} \ac{api} will be implemented as a user-specific code (block \textit{User-specific Code} in Fig. \ref{fig:simulation:webots_user_code_and_api}).
+In this chapter, a logic that performs translation from Webots \ac{api} to \ac{ros2} \ac{api} will be implemented as a Webots controller (block \textit{User-specific Code} in Fig. \ref{fig:simulation:webots_user_code_and_api}).
 Therefore, a block \textit{Webots Controller} from the figure will be referenced as \ac{ros2} driver in the further text.
 
 \section{Webots within \ac{ros2}}
-Previously, a term \ac{ros2} driver in scope of Webots is defined. But now, we should define how the \ac{ros2} driver and Webots simulation are executed within \ac{ros2} application. To run the \ac{ros2} driver and Webots to interact with the rest of \ac{ros2} system we can simply put \ac{ros2} libraries to \texttt{PATH}, start the Webots simulation, execute the \ac{ros2} driver and start needed \ac{ros2} nodes.
+Previously, a term \ac{ros2} driver in scope of Webots is defined.
+But now, we should define how the \ac{ros2} driver and Webots simulation are executed within \ac{ros2} application. To run the \ac{ros2} driver and Webots to interact with the rest of \ac{ros2} system we can simply put \ac{ros2} libraries to \texttt{PATH}, start the Webots simulation, execute the \ac{ros2} driver and start needed \ac{ros2} nodes.
 
 However, to better integrate Webots into \ac{ros2} launch files\footnote{Launch files in scope of \ac{ros2} are purely documented. Good documentation to understand the core concepts (although not completely accurate) can be found in \ac{ros2} design specification at \url{https://design.ros2.org/articles/roslaunch.html}. A superficial explanation, hiding core concepts, on the usage of the launch files, is given in \ac{ros2} tutorials at \url{https://index.ros.org/doc/ros2/Tutorials/Launch-system/}} are used. The launch files in \ac{ros2} allow user to execute multiple processes (often \ac{ros2} nodes) at once. The launch files are described with Python scripts, and there are three important concepts:
 \begin{itemize}
     \item Actions: They represent an intention to do something, like start a process (usually \ac{ros2} nodes), set a parameter, or push a namespace. 
-    \item Substitutions: Define a transformable expression that means that the expression contains a placeholder that can be replaced. For example, the substitution can be a path to a file in which filename is again a substitution.
-    \item Events: Actions can produce subscribable events. For example, when a process is closed, it will emit an event on which we can close the whole \ac{ros2} application.
+    \item Substitutions: Define a transformable expression. 
+    It means that the expression contains a placeholder that can be replaced.
+    For example, the substitution can be a path to a file in which filename is again a substitution.
+    \item Events: Actions can produce subscribable events.
+    For example, when a process is closed, it will emit an event on which we can close the whole \ac{ros2} application.
 \end{itemize}
 
 Using those three concepts minimal launch file containing Webots and \ac{ros2} driver is created (see Fig. \ref{fig:simulation:webots_launch}).
@@ -37,22 +50,30 @@ Using those three concepts minimal launch file containing Webots and \ac{ros2} d
     \label{fig:simulation:webots_launch}
 \end{figure}
 
-It will start Webots with three substitutions, \texttt{gui}, \texttt{mode} and \texttt{world} which are used to configure Webots. These substitutions are taken from arguments (as \texttt{LaunchConfiguration}). Also it defines action which will kill the launch file if a user exit the simulation.
+It will start Webots with three substitutions, \texttt{gui}, \texttt{mode} and \texttt{world} which are used to configure Webots.
+These substitutions are taken from arguments (as \texttt{LaunchConfiguration}).
+Also it defines action which will kill the launch file if a user exit the simulation.
 
-The whole implementation is later completely hidden from the user (in Chapter \ref{chap:generalization}).
+The whole implementation is later completely hidden from the user (introduced in Chapter \ref{chap:generalization}).
 
 % TODO: Explain clock synchronization
 
 \section{Covered Sensors and Actuators}
 
-In this section, the implementation of \ac{ros2} driver for the simulated e-puck2 robot is explained. Please note that only the first section (section \label{sec:simulation:odometry_velocity}) will provide the comprehensive explanation. The other sections will briefly cover the implementation details. 
+In this section, the implementation of \ac{ros2} driver for the simulated e-puck2 robot is explained.
+Please note that only the first section (section \label{sec:simulation:odometry_velocity}) will provide the comprehensive explanation.
+The other sections will briefly cover the implementation details. 
 
 \subsection{Differential Drive}
 \label{sec:simulation:odometry_velocity}
 
-Using data from sensors such as wheel encoders, camera, or \ac{imu}, or fusing them, one can estimate the change in position robot's overtime \cite{shen_localization_2011, nister_visual_2004}. With the dead reckoning method, the change in position can be accumulated, and in that way, the robot's position in the local frame (frame relative to robot's start position) can be estimated \cite{ben-ari_elements_2018, astolfi_exponential_1999}. In \ac{ros}, each sensor used for odometry should publish messages of type \texttt{nav\_msgs/Odometry}, and messages from different sensors later can be fused to increase accuracy. 
+Using data from sensors such as wheel encoders, camera, or \ac{imu}, or fusing them, one can estimate the change in robot's position overtime \cite{shen_localization_2011, nister_visual_2004}.
+With the dead reckoning method, the change in position can be accumulated, and in that way, the robot's position in the local frame (frame relative to robot's start position) can be estimated \cite{ben-ari_elements_2018, astolfi_exponential_1999}.
+In \ac{ros2}, each sensor used for odometry should publish messages of type \texttt{nav\_msgs/Odometry}, and messages from different sensors later can be fused to increase accuracy. 
 
-In the scope of the project, only wheel encoders are used for odometry. Furthermore, e-puck2 does not have encoders but step motors. However, since we can control steps, precisely that data can be used for odometry calculation.
+In the scope of the project, only wheel encoders are used for odometry.
+Furthermore, e-puck2 does not have encoders but step motors.
+However, since we can control steps precisely, that data can be used for odometry calculation.
 
 \begin{figure}[H]
     \centering
@@ -117,11 +138,16 @@ Knowing the angular and linear velocity, we can integrate it to obtain a positio
     \label{fig:simulation:odometry_schema}
 \end{figure}
 
-As it is a non-linear system of differential equations we can integrate it using one of the methods for the numeric integration. It can simply be integrated using Euler method expressed in general terms as:
+As it is a non-linear system of differential equations we can integrate it using one of the methods for the numeric integration.
+It can simply be integrated using Euler method expressed in general terms as:
 \begin{equation}
     y(t + h) \approx y(t) + h y'(t)
 \end{equation}
-This method would be computationally cheap, but not as accurate as for example fourth order of Runge-Kutta \cite[p. 40]{noauthor_solving_1993}. The choice of the method for the numerical integration is mainly based on sample rate we perform with Pi-puck extension. In case of e-puck2 physical robot, communication with the on-board \ac{mcu} is configured exchange data with pi-puck extension at around 20Hz. Considering the slow sample rate and the computational power of the Raspberry Pi Zero to handle floating-point operations it is reasonable to choose the fourth order of Runge-Kutta over Euler method and trade computation resources for better accuracy. Therefore, we express the numerical integration as following:
+This method would be computationally cheap, but not as accurate as for example fourth order of Runge-Kutta \cite[p. 40]{noauthor_solving_1993}.
+The choice of the method for the numerical integration is mainly based on sample rate we perform with Pi-puck extension.
+In case of e-puck2 physical robot, communication with the on-board \ac{mcu} is configured exchange data with pi-puck extension at around 20Hz.
+Considering the slow sample rate and the computational power of the Raspberry Pi Zero to handle floating-point operations it is reasonable to choose the fourth order of Runge-Kutta over Euler method and trade computation resources for better accuracy.
+Therefore, we express the numerical integration as following:
 
 
 \begin{equation}
@@ -177,7 +203,11 @@ in which we can neglect $ \alpha_x $ and $ \alpha_y $ as those two elements are 
 
 At this point, the obtained $ x, y, \bm{q}, \dot{x}, \dot{y} $ and $ \dot{\theta} $ are packed in \texttt{nav\_msgs/Odometry} (see Fig. \ref{fig:simulation:odometry}) and published periodically at 20Hz.
 
-With \texttt{nav\_msgs/Odometry} messages the rest of the \ac{ros2} is aware of robot's odometry data. However, in addition to odometry data, the odometry frame has to be defined as well to explain the robot's position with respect to the odometry frame. For that purpose \ac{ros2} defines transform messages of type \texttt{geometry\_msgs/TransformStamped} (see Fig. \ref{fig:simulation:transform}). In short, transform messages are used to create a transform tree to keep track of multiple coordinate frames over time. Keeping track of the coordinate frames is an essential aspect of \ac{ros} in general, and it will be properly explained in Chapter \ref{chap:generalization} in which it will be extensively utilized.
+With \texttt{nav\_msgs/Odometry} messages the rest of the \ac{ros2} is aware of robot's odometry data.
+However, in addition to odometry data, the odometry frame has to be defined as well to explain the robot's position with respect to the odometry frame.
+For that purpose \ac{ros2} defines transform messages of type \texttt{geometry\_msgs/TransformStamped} (see Fig. \ref{fig:simulation:transform}).
+In short, transform messages are used to create a transform tree to keep track of multiple coordinate frames over time. 
+Keeping track of the coordinate frames is an essential aspect of \ac{ros} in general, and it will be properly explained in Chapter \ref{chap:generalization} in which it will be extensively utilized.
 
 \begin{figure}[H]
     \centering
@@ -195,7 +225,8 @@ With \texttt{nav\_msgs/Odometry} messages the rest of the \ac{ros2} is aware of 
     \label{fig:simulation:transform}
 \end{figure}
 
-but to control the robot's velocity a message of type \texttt{geometry\_msgs/Twist} (see Fig. \ref{fig:simulation:twist}) has to be utilized. Therefore, the node has to subscribe to the topic and set the wheels' angular speed accordingly.
+but to control the robot's velocity a message of type \texttt{geometry\_msgs/Twist} (see Fig. \ref{fig:simulation:twist}) has to be utilized.
+Therefore, the node has to subscribe to the topic and set the wheels' angular speed accordingly.
 
 \begin{figure}[H]
     \centering
@@ -226,7 +257,10 @@ where $ v_{ref}  $ is reference linear velocity (available in the \ac{ros2} mess
 \end{aligned}
 \end{equation}
 
-Within this section, a minimal implementation of velocity control and odometry is given. It allows e-puck2 to use the standard \ac{ros2} interface to receive velocity control commands and to publish it's position and other relevant information within the odometry frame. Messages of type \texttt{geometry\_msgs/TransformStamped} are published to topic name \texttt{/tf}, messages of type \texttt{nav\_msgs/Odometry} are published to a topic name \texttt{/odom} and messages of type \texttt{geometry\_msgs/Twist} are received from topic name \texttt{/cmd\_vel}. Those topic names follow \ac{ros2} conventions for topic naming and can be changed using \ac{ros2} remapping\footnote{Tutorial on \ac{ros2} remapping can be found at \url{https://index.ros.org/doc/ros2/Tutorials/Node-arguments/\#id1}}. 
+Within this section, a minimal implementation of velocity control and odometry is given.
+It allows e-puck2 to use the standard \ac{ros2} interface to receive velocity control commands and to publish it's position and other relevant information within the odometry frame.
+Messages of type \texttt{geometry\_msgs/TransformStamped} are published to topic name \texttt{/tf}, messages of type \texttt{nav\_msgs/Odometry} are published to a topic name \texttt{/odom} and messages of type \texttt{geometry\_msgs/Twist} are received from topic name \texttt{/cmd\_vel}.
+Those topic names follow \ac{ros2} conventions for topic naming and can be changed using \ac{ros2} remapping\footnote{Tutorial on \ac{ros2} remapping can be found at \url{https://index.ros.org/doc/ros2/Tutorials/Node-arguments/\#id1}}. 
 
 \subsection{Distance Sensors}
 E-puck2 is equipped with 8 infra-red sensors and one \ac{tof} sensor (see Fig. \ref{fig:simulation:distance_sensors}). These sensors are modeled as \texttt{DistanceSensor}\footnote{More information about \texttt{DistanceSensor} nodes is available \url{https://cyberbotics.com/doc/reference/distancesensor}} in Webots.
@@ -241,9 +275,12 @@ E-puck2 is equipped with 8 infra-red sensors and one \ac{tof} sensor (see Fig. \
 All details about the sensors are obtained from the Webots and published to a topic of type \texttt{sensor\_msgs/Range}\footnote{Definition of \texttt{sensor\_msgs/Range} message type is available at \url{https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Range.msg}}.
 
 \subsubsection{Laser Scanner}
-\ac{ros2} defines \texttt{sensor\_msgs/LaserScan}\footnote{Definition of \texttt{sensor\_msgs/LaserScan} message type is available at \url{https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/LaserScan.msg}} for \acp{lidar} and other types of planar laser range-finders. Those messages are commonly used by \ac{ros2} community packages like \texttt{navigation2} and \texttt{slam\_toolbox}. The message type requires an array of measurements at angles that are equally distanced from each other. 
+\ac{ros2} defines \texttt{sensor\_msgs/LaserScan}\footnote{Definition of \texttt{sensor\_msgs/LaserScan} message type is available at \url{https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/LaserScan.msg}} for \acp{lidar} and other types of planar laser range-finders.
+Those messages are commonly used by \ac{ros2} community packages like \texttt{navigation2} and \texttt{slam\_toolbox}.
+The message type requires an array of measurements at angles that are equally distanced from each other. 
 
-Therefore, even though there is no \ac{lidar} available on the e-puck2 it is possible to emulate it using available distance sensors. Since the distance sensors are not equally positioned, virtual distance sensors are added to fill space between the actual distance sensors (see Fig. \ref{fig:simulation:laserscan}).
+Therefore, even though there is no \ac{lidar} available on the e-puck2 it is possible to emulate it using available distance sensors.
+Since the distance sensors are not evenly distributed, virtual distance sensors are added to fill space between the actual distance sensors (see Fig. \ref{fig:simulation:laserscan}).
 
 % TODO: Explain https://answers.ros.org/upfiles/14177210732958238.jpg
 
@@ -255,13 +292,19 @@ Therefore, even though there is no \ac{lidar} available on the e-puck2 it is pos
 \end{figure}
 
 \subsection{Light Sensors}
-E-puck2 has eight infra-red sensors which besides proximity can measure light intensity as well. \ac{ros2} interface for light sensors uses messages of type \texttt{sensor\_msgs/Illuminance}\footnote{Definition of \texttt{sensor\_msgs/Illuminance} message type is available at \url{https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Illuminance.msg}}. The message type requires the measurements to be in Lux units (illuminance) while measurements acquired in Webots\footnote{Light sensors in Webots are represented as \texttt{LightSensor} node - \url{https://cyberbotics.com/doc/reference/lightsensor}} are expressed in watts per square meter [$W/m^2$] (irradiance). The conversion is done according to \cite{michael_conversion_2019}.
+E-puck2 has eight infra-red sensors which besides proximity can measure light intensity as well.
+\ac{ros2} interface for light sensors uses messages of type \texttt{sensor\_msgs/Illuminance}\footnote{Definition of \texttt{sensor\_msgs/Illuminance} message type is available at \url{https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Illuminance.msg}}.
+The message type requires the measurements to be in Lux units (illuminance) while measurements acquired in Webots\footnote{Light sensors in Webots are represented as \texttt{LightSensor} node - \url{https://cyberbotics.com/doc/reference/lightsensor}} are expressed in watts per square meter [$W/m^2$] (irradiance). 
+The conversion is done according to \cite{michael_conversion_2019}.
 
 \subsection{\acl{imu}}
-\ac{imu} in Webots modeled as two nodes, \texttt{Accelerometer} and \texttt{Gyro}. Measurements from those two nodes are combined and packed into messages of type \texttt{sensor\_msgs/Imu}.
+\ac{imu} in Webots modeled as two nodes, \texttt{Accelerometer} and \texttt{Gyro}.
+Measurements from those two nodes are combined and packed into messages of type \texttt{sensor\_msgs/Imu}.
 
 \subsection{Camera}
-Typically, cameras in \ac{ros2} use two topics, one for data (images) and another one for intrinsic camera parameters. Images from Webots camera node are sampled, packed in \ac{ros2} messages of type \texttt{sensor\_msgs/Image} and published repeatedly. The intrinsic parameters are defined by \ac{ros2} has the following form:
+Typically, cameras in \ac{ros2} use two topics, one for data (images) and another one for intrinsic camera parameters.
+Images from Webots camera node are sampled, packed in \ac{ros2} messages of type \texttt{sensor\_msgs/Image} and published repeatedly.
+The intrinsic parameters are defined by \ac{ros2} has the following form:
 \begin{equation}
 K = \begin{bmatrix}
     f_x & 0 & c_x \\
@@ -270,10 +313,13 @@ K = \begin{bmatrix}
 \end{bmatrix}
 \end{equation}
 
-Webots doesn't provide such matrix, but it is easy to create one from the existing parameters. Since Webots camera doesn't provide distortions that move the focal length then $f_x = f_y$ and it is equal to the focal length that can be obtained in Webots (e.g. \texttt{getFocalLength()}). The principal point also doesn't have offset, but it is in the center of the image $c_x$ is equal to $ \frac{\texttt{image\_width}}{2} $ and $c_y$ is equal to $ \frac{\texttt{image\_height}}{2} $.
+Webots doesn't provide such matrix, but it is straightforward to create one from the existing parameters.
+Since Webots camera doesn't provide distortions that move the focal length then $f_x = f_y$ and it is equal to the focal length that can be obtained in Webots (e.g. \texttt{getFocalLength()}).
+The principal point also doesn't have offset, but it is in the center of the image $c_x$ is equal to $ \frac{\texttt{image\_width}}{2} $ and $c_y$ is equal to $ \frac{\texttt{image\_height}}{2} $.
 
 \subsection{\acsp{led}}
-There are eight \acsp{led} available in the robot and they are controlled with messages of type \texttt{std\_msgs/Int32}. The last three bytes of the value are used to set three \ac{rgb} components in case of \acsp{rgbled} and for the regular \acp{led} the value is used to set the intensity.
+There are eight \acsp{led} available in the robot and they are controlled with messages of type \texttt{std\_msgs/Int32}.
+The last three bytes of the value are used to set three \ac{rgb} components in case of \acsp{rgbled} and for the regular \acp{led} the value is used to set the intensity.
 
 \subsection{Final Interface}
 
@@ -318,10 +364,18 @@ In the table bellow (see Table \ref{tab:simulation:complete_interface}) the fina
     \end{adjustwidth}
 \end{table}
 
-In addition to the previously mentioned topics, there are topics with name \texttt{/gs[0-2]}, and those topics publish data from ground sensors. The ground sensors can be bought as a separate e-puck2 module. Therefore, this part of the \ac{ros2} interface will be automatically created if the module is present in the e-puck.
+In addition to the previously mentioned topics, there are topics with name \texttt{/gs[0-2]}, and those topics publish data from ground sensors.
+The ground sensors can be bought as a separate e-puck2 module.
+Therefore, this part of the \ac{ros2} interface will be automatically created if the module is present in the e-puck.
 
-Another topic not mentioned before is \texttt{/tf\_static}. It is used to describe transformations between different coordinate frames that do not typically change (for example, a transformation between the robot's base and the \ac{lidar}). Messages published to this topic have specific \ac{qos} configured, durability is set to be transient local. The transient local \ac{qos} means that the nodes joined to the system will receive the messages even though the messages are published much earlier. Avoiding periodic publishing reduces the load on the \ac{ros2} driver as the messages have to be published only once.
+Another topic not mentioned before is \texttt{/tf\_static}. 
+It is used to describe transformations between different coordinate frames that do not typically change (for example, a transformation between the robot's base and the \ac{lidar}).
+Messages published to this topic have specific \ac{qos} configured, durability is set to be transient local.
+The transient local \ac{qos} means that the nodes joined to the system will receive the messages even though the messages are published much earlier.
+Avoiding periodic publishing reduces the load on the \ac{ros2} driver as the messages have to be published only once.
 
-Another performance improvement is made by not publishing the messages all the time. The messages are published only if the subscribers are available. It significantly improves performance, especially in the camera's case, as it is very \acs{cpu}/\acs{gpu} intensive task.
+Another performance improvement is made by not publishing the messages all the time.
+The messages are published only if the subscribers are available.
+It significantly improves performance, especially in the camera's case, as it is very \acs{cpu}/\acs{gpu} intensive task.
 
 % TODO: Continious Integration
