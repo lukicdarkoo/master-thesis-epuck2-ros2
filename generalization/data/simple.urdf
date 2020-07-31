@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<robot name="robot"
+  xmlns:xacro="http://ros.org/wiki/xacro">
+  <link name="base_link"/>
+  <link name="solid"/>
+  <link name="camera"/>
+  <joint name="base_link_solid_joint"
+    type="fixed">
+    <parent link="base_link"/>
+    <child link="solid"/>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <joint name="solid_camera_joint"
+    type="fixed">
+    <parent link="solid"/>
+    <child link="camera"/>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+</robot>

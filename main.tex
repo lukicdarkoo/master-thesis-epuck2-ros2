@@ -1,0 +1,71 @@
+\documentclass[a4paper,11pt,oneside]{report}
+\usepackage{float}
+\usepackage{chngpage}
+\usepackage{acro}
+\usepackage{subcaption}
+\usepackage{minted}
+\usepackage{bm}
+\usepackage{nameref}
+\usepackage{hyperref}
+\usepackage{etoolbox}
+\usepackage{dirtree}
+\usepackage{amsmath}
+\usepackage[linesnumbered, ruled, vlined]{algorithm2e}
+\usepackage[table,x11names]{xcolor}
+\usepackage[english]{./_template/disal_report_template}
+
+% Configuration for `algorithm2e`
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+% Configuration for chapter that will be shown
+\newtoggle{FULL_REPORT}
+\toggletrue{FULL_REPORT}
+%\togglefalse{FULL_REPORT}
+
+% Configuration for `acro`
+\input{_acronyms}
+
+\title{ROS2 Programming Interface for the E-puck2 Robot}
+\shorttitle{ROS2 Programming Interface for the E-puck2 Robot}
+\author{Darko Lukic}
+\semester{SS}
+\year{2020}
+\epflsection{MT-S}
+\reportnumber{DISAL-MP44}
+\startdate{17.02.2020}
+\enddate{14.08.2020}
+\professor{Alcherio Martinoli}
+\advisor{Cyrill Baumann, David Mansolino and Olivier Michel}
+\coverimage{./introduction/figures/desired_workflow.pdf}
+
+
+\begin{document}
+
+\maketitle
+
+\newpage
+\tableofcontents
+\newpage
+
+\printacronyms
+
+\iftoggle{FULL_REPORT}{\input{abstract}}{}
+\iftoggle{FULL_REPORT}{\input{introduction/introduction}}{}
+\iftoggle{FULL_REPORT}{\input{background/background}}{}
+\iftoggle{FULL_REPORT}{\input{simulation/simulation}}{}
+\iftoggle{FULL_REPORT}{\input{physical/physical}}{}
+\iftoggle{FULL_REPORT}{\input{demos/demos}}{}
+\input{generalization/generalization}
+\iftoggle{FULL_REPORT}{\input{results/results}}{}
+\iftoggle{FULL_REPORT}{\input{conclusion/conclusion}}{}
+
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibliography}
+\bibliography{_references}
+\nocite{*}
+\bibliographystyle{ieeetr}
+%\bibliographystyle{alpha}
+
+\end{document}

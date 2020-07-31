@@ -1,0 +1,11 @@
+Robot {
+  children [
+    Solid {
+      children [
+        Camera {
+          name "camera"
+        }
+      ]
+    }
+  ]
+}

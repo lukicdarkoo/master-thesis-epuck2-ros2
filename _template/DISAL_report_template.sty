@@ -1,0 +1,244 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  STYLE FOR REPORTS
+%%  Swarm-Intelligent Systems Group
+%%
+%%  2006-09-25  Pierre Roduit, Chris Cianci
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{disal_report_template}[2006/09/25 v1.1 (PR/CC)]
+
+
+%%
+%% Packages used
+%%
+
+\RequirePackage{ifthen}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{graphicx}
+\RequirePackage{color}
+\RequirePackage{fancyhdr}
+\RequirePackageWithOptions{babel}
+
+
+%%
+%% Option handling
+%%
+%% (persistent "\RequirePackage or \LoadClass in Options section" error.)
+%%
+
+%\DeclareOption{french}{\PassOptionsToPackage[french]{babel}}
+%\DeclareOption{english}{\PassOptionsToPackage[english]{babel}}
+%\DeclareOption*{\PassOptionsToPackage[english]{babel}}
+%\ProcessOptions
+
+
+%% 
+%% Cover page
+%% 
+
+%\DeclareGraphicsExtensions{.png,.pdf}
+\graphicspath{{./}{./logos/}{./figures/}}
+
+\def\deffield#1{\expandafter\def\csname #1name\endcsname{}
+                \expandafter\def\csname #1\endcsname##1{
+                \expandafter\def\csname #1name\endcsname{##1}}}
+
+\deffield{title}
+\deffield{shorttitle}
+\deffield{author}
+\deffield{semester}
+\deffield{year}
+\deffield{epflsection}
+\deffield{reportnumber}
+\deffield{startdate}
+\deffield{enddate}
+\deffield{professor}
+\deffield{advisor}
+\deffield{coverimage}
+
+
+\renewcommand\maketitle
+{
+    \cleardoublepage
+    \thispagestyle{empty}
+    
+
+    \noindent
+    \includegraphics[width=2cm]{./_template/logo_disal}
+    \hfill 
+    \includegraphics[width=55mm]{./_template/logo_epfl.png}
+    \rule{\textwidth}{0.5pt}
+    \hspace*{6pt}\semestername\ \yearname, \epflsectionname, No. \reportnumbername
+    \hfill 
+    \begin{tabular}{rr}
+        Start:  & \startdatename \\
+        Finish: & \enddatename
+    \end{tabular}
+    \rule{\textwidth}{0.5pt}
+    \vspace{36pt}
+    \begin{center}
+        {\LARGE \textbf{\titlename}} \\
+        {\Large \textit{\authorname}}\\
+        \vspace{36pt}
+        \includegraphics[width=10 cm]{\coverimagename}
+    \end{center}
+    \vfill
+    \rule{\textwidth}{0.5pt}
+    \begin{tabular}{ll}
+        Professor: & \professorname\\
+        Assistant: & \advisorname
+    \end{tabular} \\
+    \rule{\textwidth}{0.5pt}
+}
+
+
+
+% =============================
+% Page Layout (From Latex Companion)
+% =============================
+
+
+%\usepackage{fancyhdr}
+%\pagestyle{myheadings}
+\renewcommand{\@oddfoot}{\centerline{\thepage}}
+\renewcommand{\@evenfoot}{\@oddfoot}
+\renewcommand{\@evenhead}{\slshape\leftmark}%
+\renewcommand{\@oddhead}{{\slshape\rightmark }\hfil}
+\renewcommand{\chaptermark}[1]%
+        {\markboth{\small Vision@LPM--IPR--STI \hfill Ecole Polytechnique Fédérale de Lausanne}{}}
+\renewcommand{\sectionmark}[1]%
+{
+\ifthenelse{\equal{\shorttitlename}{}}%
+      {%
+      	\markright{\authorname: \titlename }%
+      }%
+      {%
+      	\markright{\authorname: \shorttitlename }          
+      }
+}
+
+\cfoot{\thepage}  
+
+
+% ===================================
+% Caption definition
+% ===================================
+
+%\def\fnum@table{Table~\thetable}
+%\def\fnum@figure{Figure~\thefigure}
+%
+%\long\def\@makecaption#1#2{%
+%  \vskip\abovecaptionskip
+%  \sbox\@tempboxa{#1: #2}%
+%  \ifdim \wd\@tempboxa >\hsize
+%    \begin{center}
+%    \parbox{0.75\columnwidth}{\fontsize{11}{14}\selectfont #1:~#2}\par
+%    \end{center}
+%  \else
+%    \global \@minipagefalse
+%    \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+%  \fi
+%  \vskip\belowcaptionskip}
+
+
+% ===================================
+% Chapter head
+% ===================================
+
+%\def\@makechapterhead#1{%
+%  \vspace*{50\p@}%
+%  {\parindent \z@ \raggedright \normalfont
+%    \ifnum \c@secnumdepth >\m@ne
+%        \huge\bfseries \@chapapp\space \thechapter \hskip 1.5em
+%    \fi
+%    \Huge \bfseries #1\par\nobreak
+%    \vskip 40\p@
+%  }}
+\newlength{\chlen}
+\newlength{\chname}
+
+\def\@makechapterhead#1{%
+  \cleardoublepage
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne 
+        \settowidth{\chlen}{\huge\bfseries \@chapapp\space \thechapter \hskip 1.5em}
+        \setlength{\chname}{\textwidth}
+        \addtolength{\chname}{-\chlen}
+        \raggedright \huge\bfseries \@chapapp\space \thechapter \hskip 1.5em %
+        \parbox[t]{\chname}{\huge \bfseries #1 }
+    \else \raggedright \huge \bfseries #1
+    \fi
+    \par\nobreak
+    \vskip 40\p@
+  }}
+
+
+% ===================================
+
+
+
+
+
+
+%\newboolean{@english}
+%\DeclareOption*{}{\setboolean{@english}{true}} % default case if none specified
+%\DeclareOption{french}{\setboolean{@english}{false}}
+%\DeclareOption{english}{\setboolean{@english}{true}}
+%
+%\ProcessOptions
+%
+%\ifthenelse{\boolean{@english}}%
+%{\usepackage[english]{babel} %<- The problem is here!
+%}
+%{\usepackage[french]{babel}}
+
+
+
+
+
+
+
+
+
+
+%%\usepackage{geometry}
+%
+%% TODO: MAKE A GRAPHICS REPOSITORY?
+%%\graphicspath{{/home/imagelib/logos/}{//lpmvision.epfl.ch/imagelib/logos/}}
+%
+%%%%%%
+%%%%%%   SETUP MARGINS AND PENALTIES NEEDED FOR STANFORD THESIS
+%%%%%%
+%
+%     \setlength\voffset         {0pt}
+%     \setlength\hoffset         {0pt}
+%     \setlength\topmargin       {0pt}
+%     \setlength\headheight      {0pt}
+%     \setlength\headsep         {0pt}
+%     \setlength\textwidth       {157mm}
+%     \setlength\textheight      {245mm}
+%
+%% We need 1" margins except on the binding edge, where it is 1 1/2"
+%% Theses may be either single or double sided
+%  \if@twoside
+%     \setlength\oddsidemargin   {0pt}
+%     \setlength\evensidemargin  {0pt}
+%     \setlength\marginparwidth  {0pt}
+%  \else
+%     \setlength\oddsidemargin   {0pt}
+%     \setlength\evensidemargin  {0pt}
+%     \setlength\marginparwidth  {0pt}
+%  \fi
+%
+%%\marginparsep 10pt
+%%\oddsidemargin 0.5in \evensidemargin 0in
+%%\marginparwidth 40pt 
+%
+%%\topmargin 0pt \headsep .5in
+%%\textheight 8.1in \textwidth 6in
+
+

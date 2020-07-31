@@ -1,0 +1,41 @@
+https://unix.stackexchange.com/a/414770 
+psrecord $(pgrep epuck2_driver) --interval 1 --plot plot1.pdf --duration 60
+
+Minimal publisher in Python
+https://raw.githubusercontent.com/ros2/examples/master/rclpy/topics/minimal_publisher/examples_rclpy_minimal_publisher/publisher_member_function.py 
+rpi_py_publisher.pdf
+
+
+Reading data from: LED, infrared sensors, light sensors, encoders, gyro, accelerometer
+Rate: 31Hz (every 32ms)
+rpi_py_publisher_sensor_readings
+
+```
+pi@raspberrypi:~/VL53L0X $ ps -o nlwp 7919
+NLWP
+   6
+```
+
+Only reading data over I2C
+rpi_py_sensor_readings
+
+Minimal publisher in C++ 
+https://github.com/ros2/examples/blob/master/rclcpp/minimal_publisher/member_function.cpp
+without print() and at 32ms interval
+rpi_cpp_publisher_32ms_noprint
+
+
+Minimal publisher in Python 
+https://raw.githubusercontent.com/ros2/examples/master/rclpy/topics/minimal_publisher/examples_rclpy_minimal_publisher/publisher_member_function.py 
+rpi_cpp_publisher_32ms_noprint
+without print() and at 32ms interval
+rpi_py_publisher_32ms_noprint
+
+
+Minimal publisher in Python old school
+https://github.com/ros2/examples/blob/master/rclpy/topics/minimal_publisher/examples_rclpy_minimal_publisher/publisher_old_school.py
+without print() and at 32ms interval
+rpi_py_publisher_32ms_noprint_oldschool
+
+Odometry (https://github.com/cyberbotics/epuck_ros2/pull/4)
+rpi_cpp_odometry_32ms.pdf
