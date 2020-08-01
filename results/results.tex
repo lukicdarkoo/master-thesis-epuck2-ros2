@@ -4,9 +4,10 @@
 
 \section{Comparison of Physical and Simulated E-puck2}
 
-\subsection{ROS2 Interface for Physical vs Simulated E-puck2}
+\subsection{ROS2 Interface for Physical vs. Simulated E-puck2}
 \subsection{Camera Performance Comparison}
-The purpose of this analysis is to determine a suitable way to transport the images from Raspberry Pi Zero and to identify bottlenecks. In the Table \ref{tab:results:camera_perf}, performances are measured in \ac{fps} and the measurements are given for different camera implementations.
+This analysis aims to determine a suitable way to transport the images from Raspberry Pi Zero and identify bottlenecks.
+In the Table \ref{tab:results:camera_perf}, performances are measured in \ac{fps} and the measurements are given for different camera implementations.
 
 \begin{table}[H]
     \begin{adjustwidth}{-1.5in}{-1.5in} 
@@ -56,7 +57,9 @@ Please note that the experiments are done under the following conditions:
     \item White noise is simulated by putting finger on the camera. The assumption is that the low light condition produces a lot of white noise. 
 \end{itemize}
 
-Measured data transfer between Raspberry Pi Zero and PC during the transfer of raw images is 12.8Mb/s which is quite close speed measured using with \texttt{iperf3}. Since every image is sent in \ac{rgb} format that means 7Mb per image ($ 8 \times \frac{ 3 \times 640 \times 480 }{1024 \times 1024}$), or at 1.62 \ac{fps} it is 11.4Mb/s. Therefore, by sending raw images we the most probably encounter limitation of the Wifi network.
+Measured data transfer between Raspberry Pi Zero and PC during the transfer of raw images is 12.8Mb/s, which is quite close speed measured using with \texttt{iperf3}.
+Since every image is sent in \ac{rgb} format that means 7Mb per image ($ 8 \times \frac{ 3 \times 640 \times 480 }{1024 \times 1024}$), or at 1.62 \ac{fps} it is 11.4Mb/s.
+Therefore, by sending raw images, we most probably encounter limitations of the Wifi network.
 
 \subsection{Performance Comparison in Mapping}
 \subsection{Performance Comparison in Navigation}
