@@ -62,7 +62,7 @@ Therefore, the new universal driver design is given in the following picture.
 \end{figure}
 
 With the universal driver, a notion of devices is introduced.
-A device\footnote{Note that "device" is related to a module in the universal driver and "Webots device" is a node that represents a robot device in Webots}, in this context, represent a module which transforms data from of one or more Webots devices to one or more \ac{ros2} topics and services.
+A device\footnote{Note that "device" is related to a module in the universal driver and "Webots device" is a node that represents a robot device in Webots.}, in this context, represent a module which transforms data from of one or more Webots devices to one or more \ac{ros2} topics and services.
 By default, the universal driver will go through all Webots devices available in a robot and try to match them with a suitable device.
 If the match is found, a new device is instantiated, a Webots device is assigned to it, and the device will start publishing or subscribing to the \ac{ros2} messages.
 
@@ -339,11 +339,11 @@ Also, it provides a high level of configurability (see table bellow, Table \ref{
 \end{table}
 
 \subsection{Range}
-Webots returns value from distance sensors according to specified lookup table\footnote{In the example of lookup table first column represents the actual measurement, the second is the raw measurement, and the third column is the noise}. 
+Webots returns value from distance sensors according to specified lookup table\footnote{In the example of lookup table first column represents the actual measurement, the second is the raw measurement, and the third column is the noise.}. 
 
 \begin{minted}{python}
 lookupTable [ 0     1000  0,
-              0.1   200  0.1 ]
+              0.1   200   0.1 ]
 \end{minted}
 
 It means it will not necessarily return a real distance to the closest object, but what Webots consider a raw value - linearly interpolated value.

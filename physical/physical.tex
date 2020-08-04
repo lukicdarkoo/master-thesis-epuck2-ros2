@@ -29,7 +29,7 @@ With \ac{imu} and the \ac{tof} sensor, Raspberry Pi Zero Zero W communicates dir
         \hline
         \textbf{Sensor function} & \textbf{Sensor model} \\
         \hline
-        Camera & Omnivision OV7670 CMOS\footnote{Datasheet of the OV7670 sensor is available at \url{http://projects.gctronic.com/epuck2/doc/OV7670.pdf}} \\
+        Camera & Omnivision OV7670 CMOS\footnote{Datasheet of the OV7670 sensor is available at \url{http://projects.gctronic.com/epuck2/doc/OV7670.pdf}.} \\
         \hline
         Distance and light sensors & TCRT1000 \\
         \hline
@@ -76,7 +76,7 @@ The protocol used to communicate with the sensors is explained in the correspond
 Before \ac{ros2} driver is created \ac{ros2} has to be installed on the Raspberry Pi Zero W.
 The board comes with \ac{cpu} with arm32 architecture and Raspberry Pi OS.
 This configuration is not officially supported by \ac{ros2} and standard installation procedure using \acs{os}' package manager doesn't work.
-The closest official support is a source compilation for Debian Buster placed as a tier 3 support\footnote{\ac{ros2} supported platforms are defined by REP 2000 available at \url{https://www.ros.org/reps/rep-2000.html\#foxy-fitzroy-may-2020-may-2023}}.
+The closest official support is a source compilation for Debian Buster placed as a tier 3 support\footnote{\ac{ros2} supported platforms are defined by REP 2000 available at \url{https://www.ros.org/reps/rep-2000.html\#foxy-fitzroy-may-2020-may-2023}.}.
 This means that \ac{ros2} has to be cross-compiled and that potential incompatibilities have to be manually resolved.
 
 Since the \ac{ros2} driver is intended for a wide range of users the installation procedure has to be user-friendly.
@@ -108,7 +108,7 @@ For those use cases, cross-compilation tools are provided.
 
 \subsection{\ac{ros2} Cross-compilation}
 In the scope of the project, tools are built to help with the process of \ac{ros2} cross-compilation.
-All cross-compilation dependencies and configurations are packaged into a Docker container\footnote{Thorough guide about the \ac{ros2} cross-compilation is available at \url{https://github.com/cyberbotics/epuck_ros2/tree/master/installation/cross_compile}}.
+All cross-compilation dependencies and configurations are packaged into a Docker container\footnote{Thorough guide about the \ac{ros2} cross-compilation is available at \url{https://github.com/cyberbotics/epuck_ros2/tree/master/installation/cross_compile}.}.
 This means that the user doesn't need to worry about host \ac{os} and tools compatibility. 
 
 \begin{figure}[H]
@@ -148,16 +148,15 @@ However, as the \ac{ros2} driver included more sensors the \ac{cpu} load was too
   \caption{\ac{cpu} and \ac{ram} load with C++}
   \label{fig:physical:py_vs_cpp:cpp}
 \end{subfigure}
-\caption[Performance comparison of implementations in Python and C++]{Performance comparison of the similar node \ac{ros2} node implemented in Python and C++. The \ac{cpu} and \ac{ram} load is measured using \texttt{psrecord} tool}
+\caption[Performance comparison of implementations in Python and C++]{Performance comparison of the similar node \ac{ros2} node implemented in Python and C++. The \ac{cpu} and \ac{ram} load is measured using \texttt{psrecord} tool\footnotemark}
 \label{fig:physical:py_vs_cpp}
 \end{figure}
+\footnotetext{The exact command to measure the load is \texttt{psrecord \$(pgrep epuck2\_driver) --interval 1 --plot plot.pdf --duration 60}}
 
 In Fig. \ref{fig:physical:py_vs_cpp} performances of Python and C++ implementation of similarly implemented \ac{ros2} node that provide the same functionalities are given.
 More precisely, they both publish odometry data, measurements from eight distance sensors, laser scan, and they are both subscribed to the velocity control topic.
 In the figure, we can observe that \ac{cpu} usage is three times lower while \ac{ram} is almost two times lower.
 This analysis in early stage of implementation steered the development towards C++\footnote{One of the bottlenecks was in \ac{ros2} client library for Python (\texttt{rclpy}) related to timer implementation - \url{https://github.com/ros2/rclpy/issues/520}. Fixing it improved the performances, but C++ implementation was still more efficient.}.
-
-% The exact command to measure the load is \texttt{psrecord \$(pgrep epuck2\_driver) --interval 1 --plot plot.pdf --duration 60}
 
 \section{Camera}
 As mentioned before, the camera available on e-puck2 (Omnivision OV7670 CMOS) captures images at 15 \acs{fps} in resolution of 640x480.
@@ -187,7 +186,7 @@ The library is based on \ac{omx} and the goal is to ensure consistent interface 
 For comprehensive explanation about hardware blocks read \cite{noauthor_videocore_nodate-1} and for software \cite{noauthor_videocore_nodate}, both are great sources of information.
 
 \subsubsection{\ac{ros2} Camera Driver Implementation}
-There are a few available \ac{ros}1 and \ac{ros2} packages that implement \ac{gpu} accelerated image acquisition and processing.
+There are a few available \ac{ros1} and \ac{ros2} packages that implement \ac{gpu} accelerated image acquisition and processing.
 Unfortunately, these packages expect the camera to be connected via \ac{csi} which is not the case in e-puck2. 
 Therefore, the whole \ac{ros2} camera node is implemented from scratch, including image acquisition based on \ac{v4l2} and image processing (compression and resizing) based on \ac{mmal}.
  
@@ -260,7 +259,7 @@ $ T_{ticks} \leftarrow 2^{16} N_{overflow} + C_{ticks} $\;
 By applying Alg. \ref{alg:physical:overflow}, in $ T_{ticks} $ a total number of ticks will be stored, taking overflows into the consideration. It is important set $ N_{grace} $ reasonably big such that $ |P_{ticks} - C_{ticks}| > N_{grace} $ is only satisfied when the overflow occurs.
 
 \section{Software Quality Assurance}
-As a part of ROSIN\footnote{Software Quality Assurance propositions of ROSIN project can be fount at \url{https://www.rosin-project.eu/software-quality-assurance}}, this master project has to incorporate software engineering best practices such as continuous integration \cite{meyer_continuous_2014}, unit testing and code reviews. Those practices are fully utilized throughout the whole project and they will be briefly explained here.
+As a part of ROSIN\footnote{Software Quality Assurance propositions of ROSIN project can be fount at \url{https://www.rosin-project.eu/software-quality-assurance}.}, this master project has to incorporate software engineering best practices such as continuous integration \cite{meyer_continuous_2014}, unit testing and code reviews. Those practices are fully utilized throughout the whole project and they will be briefly explained here.
 
 \subsection{\ac{ros2} Node Unit Tests}
 

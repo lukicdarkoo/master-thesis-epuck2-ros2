@@ -23,6 +23,11 @@
 \toggletrue{FULL_REPORT}
 %\togglefalse{FULL_REPORT}
 
+% for reviewing
+\definecolor{green4}{RGB}{0,128,0}
+\newcommand{\note}[1]{\textcolor{green4}{\textbf{NOTE:} [{#1}]}}
+
+
 % Configuration for `acro`
 \input{_acronyms}
 
@@ -37,7 +42,7 @@
 \enddate{14.08.2020}
 \professor{Alcherio Martinoli}
 \advisor{David Mansolino, Cyrill Baumann and Olivier Michel}
-\coverimage{./introduction/figures/desired_workflow.pdf}
+\coverimage{./_template/project_logo.png}
 
 
 \begin{document}
@@ -65,7 +70,7 @@
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{_references}
 \nocite{*}
-\bibliographystyle{ieeetr}
+\bibliographystyle{IEEEtran}
 %\bibliographystyle{alpha}
 
 \end{document}

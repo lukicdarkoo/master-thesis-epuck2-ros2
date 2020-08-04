@@ -1,5 +1,9 @@
 # ROS2 Programming Interface for the E-puck2 Robot
 
+<p align="center">
+  <img width="400px" src="_template/project_logo.png">
+</p>
+
 This is a report for my master's project about [ROS2](https://index.ros.org/doc/ros2/) programming interface for the [e-puck2 robot](https://www.gctronic.com/doc/index.php/e-puck2).
 
 > This project's motivation is to close the loop between the simulation and the physical world in a robotics application and allow an effortless algorithm transfer from a robot to a robot in general.

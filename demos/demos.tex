@@ -2,7 +2,7 @@
 \label{chap:demos}
 \shorttitle{\nameref{chap:demos}}
 
-Once a robot has \ac{ros2} drive running, \ac{ros2} nodes can be built on top of it, or community \ac{ros2} nodes can be integrated.
+Once a robot has a \ac{ros2} driver running, \ac{ros2} nodes can be built on top of it, or community \ac{ros2} nodes can be integrated.
 Therefore, in this chapter, various examples that utilize the e-puck2's \ac{ros2} interface will be shown while focusing on custom-built nodes.
 All demos presented in this chapter work with the physical and simulated e-puck2 robots.
 Some demos are also successfully tested with a few other simulated robots.
@@ -50,6 +50,8 @@ It also sets appropriate linear or angular velocity depending on the type of the
 Effectively, this node shows that \texttt{/odom} and \texttt{/cmd\_vel} topics are properly implemented while providing a useful feature.
 
 \section{Custom Mapper Node}
+\label{sec:demos:mapping}
+
 The goal of the next example is to utilize a bigger portion of the created \ac{ros2} interface.
 The goal is to map the environment using e-puck2 robot and it's distance sensors.
 A few approaches are considered to meet the goal:
@@ -60,7 +62,7 @@ A few approaches are considered to meet the goal:
     \item Port \texttt{gmapping} \ac{slam} solution (that is available only for \ac{ros}1) to \ac{ros2}.
 \end{itemize}
 
-In tests, \texttt{slam\_toolbox} and \texttt{cartographer} were not able to provide accurate mapping as of scarce distance measurements\footnote{Author of \texttt{slam\_toolbox}, Steve Macenski, explained that modern graph-based \ac{slam} solutions don't provide good results when used with e-puck2 robot (or similar robots with a few distance sensors) like old particle filter based \ac{slam} solutions - \url{https://github.com/SteveMacenski/slam_toolbox/issues/192}}. Using \texttt{gmapping} through \ac{ros}1 bridge indeed gave a good results.
+In tests, \texttt{slam\_toolbox} and \texttt{cartographer} were not able to provide accurate mapping as of scarce distance measurements\footnote{Author of \texttt{slam\_toolbox}, Steve Macenski, explained that modern graph-based \ac{slam} solutions don't provide good results when used with e-puck2 robot (or similar robots with a few distance sensors) like old particle filter based \ac{slam} solutions - \url{https://github.com/SteveMacenski/slam_toolbox/issues/192}.}. Using \texttt{gmapping} through \ac{ros}1 bridge indeed gave a good results.
 However, complex installation and usage is something we tried to avoid as it is not user-friendly.
 Porting \texttt{gmapping} to \ac{ros2} is feasible, but maintenance of a such complex software would be time intensive.
 
@@ -123,6 +125,8 @@ To fill the empty space between the robot and the obstacle (white pixels in Fig.
 Finally, the result can be observed in the figure above (Fig. \ref{fig:demos:mapping}).
 
 \section{Navigation Integration}
+\label{sec:demos:navigation}
+
 Another example is navigation.
 For this demo, Navigation2 community package is integrated.  
 \begin{figure}[H]
@@ -131,7 +135,7 @@ For this demo, Navigation2 community package is integrated.
     \caption[Architecture of the Navigatio2 package]{Architecture of the Navigatio2 package\footnotemark}
     \label{fig:demos:navigation_overview}
 \end{figure}
-\footnotetext{The image is taken from official Navigation2 GitHub repository available at \url{https://github.com/ros-planning/navigation2}}
+\footnotetext{The image is taken from official Navigation2 GitHub repository available at \url{https://github.com/ros-planning/navigation2}.}
 
 The package is extremely configurable, including hundreds of parameters.
 Therefore, it requires a good understanding of the background theoretical concepts to configure it efficiently \cite{zheng_ros_nodate}.
