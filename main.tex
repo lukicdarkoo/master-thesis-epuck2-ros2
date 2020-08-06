@@ -10,6 +10,7 @@
 \usepackage{etoolbox}
 \usepackage{dirtree}
 \usepackage{amsmath}
+\usepackage{appendix}
 \usepackage[linesnumbered, ruled, vlined]{algorithm2e}
 \usepackage[table,x11names]{xcolor}
 \usepackage[english]{./_template/disal_report_template}
@@ -65,12 +66,13 @@
 \iftoggle{FULL_REPORT}{\input{results/results}}{}
 \iftoggle{FULL_REPORT}{\input{conclusion/conclusion}}{}
 
-
 \cleardoublepage
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{_references}
 \nocite{*}
 \bibliographystyle{IEEEtran}
 %\bibliographystyle{alpha}
+
+\input{appendix/appendix}
 
 \end{document}
