@@ -30,7 +30,7 @@ It visualizes the robot's pose obtained from the odometry, history of odometry r
 \section{Drive Calibration}
 
 Two constants are essential in order to have accurate odometry: wheelbase (distance between the contact points of the two wheels), and wheel radius.
-These constants can be measured, but even with the perfect measurements, they are subject to systematic odometry errors. 
+These constants can be measured, but even with the perfect measurements, they are subject to systematic odometry errors, caused by imperfections in the design and mechanical implementation of a mobile robot.
 Typical systematic error is uncertainty about the wheelbase and means that the rubber tires contact the floor not in one point, but rather in a contact area \cite{borenstein_measurement_1996}.
 
 Therefore, we use \texttt{/odom} and \texttt{/cmd\_vel} topics that are previously created to calibrate the two important constants for odometry.
@@ -47,7 +47,8 @@ For the wheelbase, the robot is rotated a predefined number of rotations; then, 
 
 The custom-created node continuously receives the readings from the \texttt{/odom} topic to stop the robot exactly when the robot reaches the goal position.
 It also sets appropriate linear or angular velocity depending on the type of the test.
-Effectively, this node shows that \texttt{/odom} and \texttt{/cmd\_vel} topics are properly implemented while providing a useful feature.
+Finally, the calibration node is successfully utilized for odometry calibration of the e-puck2 robot.
+% Effectively, this node shows that \texttt{/odom} and \texttt{/cmd\_vel} topics are properly implemented while providing a useful feature.
 
 \section{Custom Mapper Node}
 \label{sec:demos:mapping}
@@ -137,8 +138,8 @@ For this demo, the Navigation2 community package is integrated.
 \end{figure}
 \footnotetext{The image is taken from official Navigation2 GitHub repository available at \url{https://github.com/ros-planning/navigation2}.}
 
-The package is extremely configurable, including hundreds of parameters.
-Therefore, it requires a good understanding of the background theoretical concepts to configure it efficiently \cite{zheng_ros_nodate}.
+% The package is extremely configurable, including hundreds of parameters.
+% Therefore, it requires a good understanding of the background theoretical concepts to configure it efficiently \cite{zheng_ros_nodate}.
 
 It uses transforms, maps, and measurements from range finders to control the robot's velocity, effectively avoiding obstacles and converging towards the destination (see Figure \ref{fig:demos:navigation_overview}).
 Based on the provided map, it builds a global cost map used by a planner to find a global path (e.g., using an A star algorithm) to the destination.

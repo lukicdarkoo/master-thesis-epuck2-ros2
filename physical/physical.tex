@@ -175,7 +175,7 @@ A brief overview on \ac{gpu} on Raspberry Pi Zero W will be given first. The typ
  \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{physical/figures/gpu_architecture}
-    \caption{\ac{gpu} architecture \cite{noauthor_videocore_nodate-1}}
+    \caption{\ac{gpu} architecture \cite{jones_videocore_nodate-1}}
     \label{fig:physical:gpu_architecture}
 \end{figure}
 
@@ -185,12 +185,12 @@ These components are orchestrated by \ac{vcos} (abstraction layer on top of an \
 Signaling between \ac{cpu} and \ac{gpu} is done through \ac{vchi} while the images are shared by storing them on the \ac{ram}.
 From a software point of view, the \ac{mmal} library is used to interact with the \ac{gpu}.
 The library is based on \ac{omx} and the goal is to ensure consistent interface across all \acp{gpu} available in different models of Raspberry Pi.
-For comprehensive explanation about hardware blocks, please refer to \cite{noauthor_videocore_nodate-1} and for software \cite{noauthor_videocore_nodate}, both are great sources of information.
+For comprehensive explanation about hardware blocks, please refer to \cite{jones_videocore_nodate-1} and for software \cite{jones_videocore_nodate}, both are great sources of information.
 
 \subsubsection{\ac{ros2} Camera Driver Implementation}
 There are a few available \ac{ros1} and \ac{ros2} packages that implement \ac{gpu} accelerated image acquisition and processing.
 Unfortunately, these packages expect the camera to be connected via \ac{csi} which is not the case in e-puck2. 
-Therefore, the whole \ac{ros2} camera node is implemented from scratch, including image acquisition based on \ac{v4l2} and image processing (compression and resizing) based on \ac{mmal}.
+Therefore, the whole \ac{ros2} camera node is implemented from scratch, including image acquisition based on \acs{v4l2} and image processing (compression and resizing) based on \ac{mmal}.
  
  \begin{figure}[H]
     \centering
@@ -199,11 +199,11 @@ Therefore, the whole \ac{ros2} camera node is implemented from scratch, includin
     \label{fig:physical:camera_software_architecture}
 \end{figure}
  
- In Figure \ref{fig:physical:camera_software_architecture} a software architecture of the camera node is given. 
- Initially, the camera is configured over \ac{i2c} (block \texttt{OV7670}) and then \ac{v4l2} is used to initiate an image capture and store it to the \ac{ram}.
- The pointer to the image is passed through \ac{mmal} block which interacts with the \ac{gpu} to compress and resize it. 
- Finally, the \ac{gpu} stores the processed image to the \ac{ram} and the pointer the processed image is available to the \ac{ros2} camera node.
- The node packs it into the corresponding messages type and publishes it.
+Figure \ref{fig:physical:camera_software_architecture} shows a software architecture of the camera node. 
+Initially, the camera is configured over \ac{i2c} (block \texttt{OV7670}) and then \ac{v4l2} is used to initiate an image capture and store it to the \ac{ram}.
+The pointer to the image is passed through \ac{mmal} block which interacts with the \ac{gpu} to compress and resize it. 
+Finally, the \ac{gpu} stores the processed image to the \ac{ram} and the pointer the processed image is available to the \ac{ros2} camera node.
+The node packs it into the corresponding messages type and publishes it.
  
  \subsubsection{\ac{ros2} Camera Driver Usage}
  Since the camera transmits compressed images through the network, they have to be uncompressed once the target computer is reached.
@@ -265,7 +265,8 @@ As a part of ROSIN\footnote{The Software Quality Assurance propositions of ROSIN
 
 \subsection{\ac{ros2} Node Unit Tests}
 
-The unit tests are implemented according to the standard procedure recommended by \ac{ros2}. Two \ac{ros2} nodes are executed, one node is the actual node we want to test while the other one simulates the rest of the application and executes tests. 
+The unit tests are implemented according to the standard procedure recommended by \ac{ros2}.
+Two \ac{ros2} nodes are executed, one node is the actual node we want to test while the other one simulates the rest of the application and executes tests. 
 
 \begin{figure}[H]
     \centering
@@ -274,9 +275,12 @@ The unit tests are implemented according to the standard procedure recommended b
     \label{fig:physical:mocking}
 \end{figure}
 
-A concrete example for testing of the \ac{ros2} driver is given in Figure \ref{fig:physical:mocking}. In the Figure, \ac{ros2} test node is used to emulate the rest of the \ac{ros2} application. For example, it can publish a message to \texttt{/cmd\_vel} and set angular velocity.
-The \ac{ros2} driver should receive the message and send corresponding motor velocity through \ac{i2c}. To verify whether proper commands are sent over \ac{i2c} a special \ac{i2c} module is created.
-It implements two modes, in regular mode it interacts with \ac{i2c} directly while in testing, writing everything to the filesystem. 
+A concrete example for testing of the \ac{ros2} driver is given in Figure \ref{fig:physical:mocking}.
+In the figure, \ac{ros2} test node is used to emulate the rest of the \ac{ros2} application.
+For example, it can publish a message to \texttt{/cmd\_vel} and set angular velocity.
+The \ac{ros2} driver should receive the message and send corresponding motor velocity through \ac{i2c}.
+To verify whether proper commands are sent over \ac{i2c} a special \ac{i2c} module is created.
+It implements two modes, in regular mode it interacts with \ac{i2c} directly while in the testing mode, it writes everything to the filesystem. 
 This way, \ac{ros2} test node has an opportunity to test commands addressed to the \ac{i2c}.
 
 All unit tests are based on Python's standard unit testing framework \texttt{unittest} and \ac{ros}' \texttt{launch\_test}.

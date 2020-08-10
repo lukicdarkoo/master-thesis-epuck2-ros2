@@ -19,8 +19,8 @@ The universal launch file allows users to bootstrap the project and benefit from
 % pros and cons
 This system is supposed to bring a few major advantages for the users, the most important of which is the reduction of development time.
 Instead of writing a custom Webots controller, which exposes the \ac{ros2} interface for each robot, the process of creating a \ac{ros2} interface can be completely avoided reducing development time significantly.
-Besides, if the controller written by the user is not implemented properly, every iteration on the model requires changes in the controller.
-For example, if \texttt{lookupTable} field of \texttt{DistanceSensor} is changed in model, the controller should be updated accordingly.
+% Besides, if the controller written by the user is not implemented properly, every iteration on the model requires changes in the controller.
+% For example, if \texttt{lookupTable} field of \texttt{DistanceSensor} is changed in model, the controller should be updated accordingly.
 The second major advantage of the universal driver is that it is less prone to errors.
 Since the universal driver is supposed to be maintained by the Webots team and community, the bugs should be discovered and fixed quickly.
 However, the universal driver and launch introduce a level of abstraction hiding implementation details and customization possibilities.
@@ -49,11 +49,11 @@ In this section, more details on the design will be given. Nevertheless, we need
     \label{fig:generalization:ros2_driver_within_webots}
 \end{figure}
 
-As shown in the picture, the process of creating \ac{ros2} driver required of user to use Webots \ac{api} to write \ac{ros2} driver. 
+% As shown in the picture, the process of creating \ac{ros2} driver required of user to use Webots \ac{api} to write \ac{ros2} driver. 
 The user had to write a layer that sits in between low-level \ac{api} (Webots \ac{api} in this case) and \ac{ros2} interface. 
 Although this is a necessary step for the real robots and allows users a lot of customization (or even ability to optimize), the objective is to avoid the step for the reasons given in the previous section (see Section \ref{sec:generalization:introduction}).
 
-Therefore, the new universal driver design is given in the following picture.
+% Therefore, the new universal driver design is given in the following picture.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{generalization/figures/universal_driver_within_webots.pdf}
@@ -78,7 +78,7 @@ If a user is not satisfied with the customization achieved by using the paramete
 A good example is distance sensors in e-puck2.
 The e-puck2 has nine distance sensors positioned around the robot that could emulate \ac{lidar} and publish data to the \texttt{LaserScan} topic.
 Allowing something like this in the universal driver would be too much work, and little gain due to the small number of users who would benefit from it.
-Therefore, users can disable the ROSification of Webots distance sensors and implement a custom code that will publish measurements to \texttt{LaserScan} topic\footnote{The described example is implemented, explained in more details and it is publicly available.}.
+Therefore, users can disable the ROSification of Webots distance sensors and implement a custom code that will publish measurements to \texttt{LaserScan} topic\footnote{The described example is implemented, explained in more details and it is publicly available at \url{https://github.com/cyberbotics/webots_ros2/tree/master/webots_ros2_core\#custom-launcher-file-and-driver}}.
 
 \section{\ac{ros2} Transformations}
 
@@ -133,9 +133,9 @@ This section describes Method \#3, which is based on exporting an \ac{urdf} docu
 
 \subsubsection{\acs{urdf} vs. Webots' Robot Model Representation}
 However, it is important to compare \ac{urdf} format and Webots' robot model representation first.
-\ac{urdf} is XML format and it uses only two primitives to describe robot model, links and joints.
-There has to be at least one link defined in the URDF document, usually named as \texttt{base\_link}, and it's children can be only joints \cite{noauthor_urdf_nodate} (see Figure \ref{fig:generalization:urdf_vs_webots:urdf}).
-Therefore, a link cannot be encapsulated inside another link, but can only connected with a common joint.
+\ac{urdf} is \ac{xml} format and it uses only two primitives to describe robot model, links and joints.
+The \acs{urdf} document has to contain at least one link, usually named as \texttt{base\_link}, and it's children can be only joints \cite{noauthor_urdf_nodate} (see Figure \ref{fig:generalization:urdf_vs_webots:urdf}).
+Therefore, a link cannot be encapsulated inside another link. Thus, a link can be connected to the other link with a common joint only.
 This is a main difference to Webots' robot representation as the root node in Webots encapsulates other nodes.
 In addition to it, Webots has richer specter of nodes.
 Besides the links (\texttt{Solid} node in Webots) and joints there are also nodes like \texttt{Group}, \texttt{Transform}, \texttt{Geometry} and \texttt{Shape} (see Figure \ref{fig:generalization:urdf_vs_webots:urdf}).
@@ -187,8 +187,8 @@ protected:
 \end{minted}
 
 Those methods have to be defined for each Webots node to write \ac{urdf} content using \texttt{WbVrmlWriter} class.
-Then, the methods are recursively called from the tree root (\texttt{ robot} node) to the leaves.
-To export nodes that are related by \acs{id} instead of encapsulating them is shown by the algorithm in Figure \ref{fig:generalization:urdf_flat}.
+Then, the methods are recursively called from the tree root (\texttt{ Robot} node) to the leaves.
+The algorithm in Figure \ref{fig:generalization:urdf_flat} defines a strategy to export nodes that are related by \acs{id} instead of encapsulating them.
 
 \begin{figure}[H]
     \begin{minipage}{\linewidth}
@@ -229,7 +229,7 @@ To export nodes that are related by \acs{id} instead of encapsulating them is sh
 \end{figure}
 
 Properly implementing \texttt{writeExport()} to Webots' nodes that represent joints and links will produce a desired \ac{urdf} document.
-However, let consider a very simple example in Figure \ref{fig:generalization:squashing_transforms:actual}.
+Although, the \ac{urdf} document is accurate, it contains unnecessary links (see Figure \ref{fig:generalization:squashing_transforms:actual}).
 
 \begin{figure}[H]
 \centering
@@ -249,7 +249,7 @@ However, let consider a very simple example in Figure \ref{fig:generalization:sq
 \label{fig:generalization:squashing_transforms}
 \end{figure}
 
-In the figure, there is Webots \texttt{Solid} node which got converted to \ac{urdf} link tagged as \texttt{Solid (no name)}. 
+For example, in Figure \ref{fig:generalization:squashing_transforms:actual}, there is Webots \texttt{Solid} node which got converted to \ac{urdf} link tagged as \texttt{Solid (no name)}. 
 Although this may be desirable in some cases, it usually makes \ac{ros2} transform tree complex, which leads to unnecessary computations.
 In order to avoid the computations, a squashing is performed.
 It means that only relevant Webots nodes are exported into \ac{urdf} (as link nodes) while the others are neglected.
@@ -261,8 +261,8 @@ As multiple intermediate Webots nodes can be neglected, the translation of child
     \bm{T}_{I_0}^{I_N} = \sum_{i=0}^{N-1} \bm{T}_{I_i}^{I_{i+1}}
 \end{equation}
 whereas the translation of the intermediate node ($I_m$) in respect to it's parent ($I_n$) is represented by $ \bm{T}_{I_m}^{I_n} $ and consists of a three-dimensional vector.
-Similarly, we do for the rotations:
 
+In order to determine a rotation between two relavant links we use:
 \begin{equation}
     \bm{R}_{I_0}^{I_N} = \prod_{i=0}^{N-1} \bm{R}_{I_i}^{I_{i+1}}
 \end{equation}

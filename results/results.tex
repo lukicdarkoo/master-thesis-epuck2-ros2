@@ -2,30 +2,35 @@
 \label{chap:results}
 \shorttitle{\nameref{chap:results}}
 
-This chapter will quantify the difference between the simulated e-puck2  and the physical robot's performance, also including the Khepera IV simulated robot, showing that the \ac{ros2} interface is appropriately implemented. 
-The impact of generalized \ac{ros2} will also be described. 
+This chapter analyzes whether the \ac{ros2} driver for the e-puck2 physical robot and the \ac{ros2} universal driver provide expected behavior. The analysis will be shown through three pillars:
+\begin{itemize}
+    \item Verify whether the e-puck2 physical and simulated robots have a similar behavior with the same controller.
+    \item Verify whether simulated e-puck2 and Khepera IV robots have a similar behavior with the same controller.
+    \item Verify whether the \ac{ros2} universal driver works properly with the other robots such as TIAGo++ and TurtleBot3 Burger.
+\end{itemize}
+
+% This chapter quantifies the difference between the simulated e-puck2 and the physical robot's performance, also including the Khepera IV simulated robot, showing that the \ac{ros2} interface is appropriately implemented. 
+% The impact of generalized \ac{ros2} will also be described. 
 
 \section{Comparison of Physical and Simulated E-puck2}
 
-First, the goal is to show whether the \ac{ros2} controller achieves the same results on the physical and simulated e-puck2 robots.
-A critical sensor camera will be evaluated, and then the whole system will be quantified through \ac{ros2} navigation and mapping controllers.
+In this section we want to verify whether the \ac{ros2} interface is the for the physical and simulated e-puck2 robots.
+In that respect, endpoints of the \ac{ros2} interface of the physical and the simulated e-puck2 robots will be individually compared.
+The difference of the \ac{ros2} interfaces will then be quantified with \ac{ros2} navigation and mapping controllers.
 
-\subsection{ROS2 Interface for Physical vs. Simulated E-puck2}
+\subsection{\ac{ros2} Interface Endpoints Comparison}
 
-There are three benchmarks in which the physical and simulated e-puck2 robots will be compared.
-First, the readings from the sensors need to be compared. Most of the sensors of the e-puck2 simulated robot are calibrated before this project has taken place.
-Therefore, a quick visual inspection was enough to verify that the sensors have the desired output.
-However, this is the first time the camera's resolution is increased to 640x480, producing way more data than before.
-In that regard, camera performances are quantified.
-Second, to verify whether the whole \ac{ros2} \ac{api} behaves as expected and whether it is compatible with the \ac{ros2} packages, mapping, and navigation will be quantified as well.
-
+% First, the readings from the sensors need to be compared. Most of the sensors of the e-puck2 simulated robot are calibrated before this project has taken place.
+% Therefore, a quick visual inspection was enough to verify that the sensors have the desired output.
+The \ac{ros2} interfaces for physical and simulated robots are very similar, image related topics being the only difference.
+The physical e-puck2 robot advertises \texttt{/image\_raw/compressed} topic of type \texttt{sensor\_msgs/CompressedImage} and the robot uses it to transfer compressed images over the network.
 
 \subsection{Camera Performance Comparison}
 This benchmark has to compare different \ac{ros2} camera node implementations on the physical e-puck2 robot, at which resolution and \ac{fps} it can operate.
 The analysis aims to determine a suitable way to transport the images from Raspberry Pi Zero W and identify bottlenecks.
 
 In terms of compression, the images are transported as raw, \ac{jpeg} compressed and as a Theora compressed video stream\footnote{Description of the Theora technology is available at the official website - \url{https://www.theora.org/}}.
-In terms of color encoding \ac{rgb} and \ac{yuv} are tested.
+In terms of color encoding \ac{rgb} and \acs{yuv} are tested.
 And in terms of nodes separation, the testing node was located on-board or on workstation while communicating to the Raspberry Pi Zero W over Wi-Fi.
 
 In the Table \ref{tab:results:camera_perf}, performances are measured in \ac{fps} and the measurements are given for different camera implementations.
@@ -83,15 +88,14 @@ Please note that the experiments have been done under the following conditions:
     The assumption is that the low light condition produces a lot of white noise. 
 \end{itemize}
 
-The measured data transfer between the Raspberry Pi Zero W and the \ac{pc} during the publishing of the raw images is 12.8Mb/s, which is quite close to the maximal speed measured using with \texttt{iperf3}.
+The measured data transfer between the Raspberry Pi Zero W and the \ac{pc} during the publishing of the raw images is 12.8Mb/s.
 Since every image is sent in \ac{rgb} format that means 7Mbits per image ($ 8 \times \frac{ 3 \times 640 \times 480 }{1024 \times 1024}$), or at 1.62 \ac{fps} it is 11.4Mbits/s.
 Therefore, by sending raw images, we expected to encounter limitations of the Wi-Fi network.
 
 In all other methods that require compression (\ac{jpeg} or Theora), the \ac{cpu} on Raspberry Pi Zero W was hitting 100\% of workload.
 Therefore, in those cases, the \ac{cpu} is the bottleneck.
 
-Compare achieved \ac{fps} while using \ac{jpeg} compressed images on-board and over Wi-Fi. 
-It may look strange that a slightly higher \ac{fps} is achieved with the images that are transferred over the network. 
+It may look strange that a slightly higher \ac{fps} is achieved with the images that are transferred over the network (``\ac{jpeg} over Wi-Fi'') than the images transferred locally (``\ac{jpeg} on-board''). 
 It is worth noting that the Raspberry Pi Zero W has a relatively slow \ac{cpu} and that the tool used to measure performance has to allocate a certain amount of \ac{cpu} time.
 Since the network is not the bottleneck here, but \ac{cpu}, the effect of another process using the \ac{cpu} is noticeable.
 
@@ -113,7 +117,8 @@ Since the network is not the bottleneck here, but \ac{cpu}, the effect of anothe
 \label{fig:results:camera_load}
 \end{figure}
 
-In Figure \ref{fig:results:camera_load} \ac{cpu} load of two modes are compared.
+To improve \ac{jpeg} compression performance and effectively increase the \ac{fps}, the compression is offloaded to \ac{gpu}.
+Comparison of \ac{jpeg} image compression performed on \ac{cpu} and \ac{gpu} is depicted in Figure \ref{fig:results:camera_load}.
 It shows that even though there is no compression involved, just image publishing, the images are too large for Raspberry Pi Zero W to be transmitted efficiently, and the process allocates a lot of \ac{cpu} time.
 In contrast, there the images compressed with \ac{gpu} are the small and cumbersome process of compression is offloaded to \ac{gpu}, leaving \ac{cpu} with a minimal load.
 
@@ -151,11 +156,13 @@ All maps are saved as pictures, and the comparison of the maps is shown in Figur
 \end{figure}
 
 One notices, that the quality of the maps generated in the simulation and the physical robot are similar.
-However, to quantitatively compare if the quality of the maps, we will use \ac{iou}.
+However, to quantitatively compare if the quality of the maps we use \ac{iou}:
 
 \begin{equation}
     \texttt{IoU} = \frac{\texttt{Area of Overlap}}{\texttt{Area of Union}}
 \end{equation}
+
+In which \texttt{Area of Overlap} is a number of pixels that represent a wall on both maps, while \texttt{Area of Union} is a number of pixels represent the wall in at least one of the maps.
 
 The \ac{iou} gives us the results shown in Table \ref{tab:results:map_iou}.
 
@@ -198,6 +205,7 @@ Those three types of errors are very similar on both maps.
 
 This experiment shows that even in more complex scenarios such as mapping, the same controller gives very similar results.
 The simulated robot not only replicates the same quality of mapping but also captures the same defects. 
+The observed behavior is exactly what we wanted to achieve as it proves that the same controller works correctly with the simulated and physical e-puck2 robots.
 
 \subsection{Performance Comparison in Navigation}
 \label{results:subsec:phy_navigation}
