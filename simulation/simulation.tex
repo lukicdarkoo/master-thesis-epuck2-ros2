@@ -37,7 +37,9 @@ The straightforward way to launch the \ac{ros2} driver and Webots simulation is 
     \item start the rest of the \ac{ros2} application (\ac{ros2} nodes).
 \end{itemize}
 
-However, to better integrate Webots into \ac{ros2}, launch files\footnote{Launch files in scope of \ac{ros2} are poorly documented. Good documentation to understand the core concepts (although not completely accurate) can be found in \ac{ros2} design specification at \url{https://design.ros2.org/articles/roslaunch.html}. A superficial explanation, hiding core concepts, on the usage of the launch files, is given in \ac{ros2} tutorials at \url{https://index.ros.org/doc/ros2/Tutorials/Launch-system/}.} are used. The launch files in \ac{ros2} allow user to execute multiple processes (often \ac{ros2} nodes) at once. The launch files are described with Python scripts, and there are three important concepts:
+However, to better integrate Webots into \ac{ros2}, launch files\footnote{Launch files in scope of \ac{ros2} are poorly documented.Good documentation to understand the core concepts (although not completely accurate) can be found in \ac{ros2} design specification at \url{https://design.ros2.org/articles/roslaunch.html}. A superficial explanation, hiding core concepts, on the usage of the launch files, is given in \ac{ros2} tutorials at \url{https://index.ros.org/doc/ros2/Tutorials/Launch-system/}.} are used.
+The launch files in \ac{ros2} allow user to execute multiple processes (often \ac{ros2} nodes) at once.
+The launch files are described with Python scripts, and there are three important concepts:
 \begin{itemize}
     \item Actions: They represent an intention to do something, like start a process (usually \ac{ros2} nodes), set a parameter, or push a namespace. 
     \item Substitutions: Define a transformable expression. 
@@ -75,7 +77,7 @@ It is essential to choose a suitable message type and thoroughly format data acc
 \label{sec:simulation:odometry_velocity}
 
 Using data from sensors such as wheel encoders, camera, or \ac{imu}, or fusing them, one can estimate the change in robot's position overtime \cite{shen_localization_2011, nister_visual_2004}.
-With the dead reckoning method, the change in position can be accumulated, and in that way, the robot's position in the local frame (frame relative to the robot's start position) can be estimated \cite{ben-ari_elements_2018, astolfi_exponential_1999}.
+With the dead reckoning method, the change in position can be accumulated, and, in that way, the robot's position in the local frame (frame relative to the robot's start position) can be estimated \cite{ben-ari_elements_2018, astolfi_exponential_1999}.
 In \ac{ros2}, each sensor used for odometry should publish messages of type \texttt{nav\_msgs/Odometry}, and messages from different sensors later can be fused to increase accuracy. 
 
 In the scope of this project, only wheel encoders are used for odometry.
@@ -285,7 +287,7 @@ All details about the sensors are obtained from the Webots and published to a to
 Those messages are commonly used by \ac{ros2} community packages like \texttt{navigation2} and \texttt{slam\_toolbox}.
 The message type requires an array of measurements at angles that are equally distanced from each other. 
 
-Therefore, even though there is no \ac{lidar} available on the e-puck2 it is possible to emulate it using available distance sensors.
+Therefore, even though there is no \ac{lidar} available on the e-puck2, it is possible to emulate it using available distance sensors.
 Since the distance sensors are not evenly distributed, virtual distance sensors are added to fill space between the actual distance sensors (see Fig. \ref{fig:simulation:laserscan}).
 These virtual distance sensors always give measurements of 0 meters which corresponds to invalid measurement (as minimum valid range in \texttt{sensor\_msgs/LaserScan} message is defined to be greater than 0 meters).
 % TODO: Explain https://answers.ros.org/upfiles/14177210732958238.jpg
@@ -298,7 +300,7 @@ These virtual distance sensors always give measurements of 0 meters which corres
 \end{figure}
 
 \subsection{Light Sensors}
-E-puck2 has eight infra-red sensors which besides proximity can measure light intensity as well.
+E-puck2 has eight infra-red sensors which, besides proximity, can measure light intensity as well.
 \ac{ros2} interface for light sensors uses messages of type \texttt{sensor\_msgs/Illuminance}\footnote{Definition of \texttt{sensor\_msgs/Illuminance} message type is available at \url{https://github.com/ros2/common_interfaces/blob/master/sensor_msgs/msg/Illuminance.msg}.}.
 The message type requires the measurements to be in Lux units (illuminance) while measurements acquired in Webots\footnote{Light sensors in Webots are represented as \texttt{LightSensor} node - \url{https://cyberbotics.com/doc/reference/lightsensor}.} are expressed in watts per square meter [$W/m^2$] (irradiance). 
 The conversion is done according to \cite{michael_conversion_2019}.

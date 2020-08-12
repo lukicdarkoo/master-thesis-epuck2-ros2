@@ -23,7 +23,7 @@ Therefore, different communication channels are adopted for various sensors and 
 \acp{led}, motors, and infrared sensors are connected to the on-board \ac{mcu}, allowing the Raspberry Pi Zero W to access the devices over \ac{i2c}.
 For the infrared sensors, this is necessary as Raspberry Pi Zero W does not have any \ac{dac} module. 
 Therefore, the \ac{mcu} acts as a slave which stands between analog sensors and actuators, or actuators that require deterministic updates (motors).
-With \ac{imu} and the \ac{tof} sensor, Raspberry Pi Zero Zero W communicates directly over \ac{i2c}, while with the camera, the communication is done over \ac{usb}. 
+With \ac{imu} and the \ac{tof} sensor, Raspberry Pi Zero W communicates directly over \ac{i2c}, while with the camera, the communication is done over \ac{usb}. 
 
 \begin{table}[H]
     \centering
@@ -150,7 +150,7 @@ However, as the \ac{ros2} driver included more sensors, the \ac{cpu} load was to
   \caption{\ac{cpu} and \ac{ram} load with C++}
   \label{fig:physical:py_vs_cpp:cpp}
 \end{subfigure}
-\caption[Performance comparison of implementations in Python and C++]{Performance comparison of the similar node \ac{ros2} node implemented in Python and C++. The \ac{cpu} and \ac{ram} load is measured using \texttt{psrecord} tool\footnotemark}
+\caption[Performance comparison of implementations in Python and C++]{Performance comparison of the similar node \ac{ros2} node implemented in Python and C++. The \ac{cpu} utilization and \ac{ram} usage are measured using \texttt{psrecord} tool\footnotemark}
 \label{fig:physical:py_vs_cpp}
 \end{figure}
 \footnotetext{The exact command to measure the load is \texttt{psrecord \$(pgrep epuck2\_driver) --interval 1 --plot plot.pdf --duration 60}}
@@ -179,7 +179,7 @@ A brief overview on \ac{gpu} on Raspberry Pi Zero W will be given first. The typ
     \label{fig:physical:gpu_architecture}
 \end{figure}
 
-In the figure, there are three main components on the \ac{soc}: \ac{cpu}, \ac{gpu} and \ac{ram}.
+In the figure, there are three main components on the \ac{soc}: \ac{cpu}, \ac{gpu}, and \ac{ram}.
 The \ac{gpu} has it's own computational components dedicated to different image processing tasks.
 These components are orchestrated by \ac{vcos} (abstraction layer on top of an \ac{rtos}), which also reads images from the camera.
 Signaling between \ac{cpu} and \ac{gpu} is done through \ac{vchi} while the images are shared by storing them on the \ac{ram}.
@@ -265,7 +265,7 @@ $ T_{ticks} \leftarrow 2^{16} N_{overflow} + C_{ticks} $\;
 \end{algorithm}
 \vspace*{.4cm}
 
-By applying Alg. \ref{alg:physical:overflow}, in $ T_{ticks} $ a total number of ticks will be stored, taking overflows into the consideration. It is important set $ N_{grace} $ reasonably big such that $ |P_{ticks} - C_{ticks}| > N_{grace} $ is only true when the overflow occurs.
+By applying Alg. \ref{alg:physical:overflow}, in $ T_{ticks} $ a total number of ticks will be stored, taking overflows into the consideration. It is important to set $ N_{grace} $ reasonably big such that $ |P_{ticks} - C_{ticks}| > N_{grace} $ is only true when the overflow occurs.
 
 \section{Software Quality Assurance}
 As a part of ROSIN\footnote{The Software Quality Assurance propositions of the ROSIN project can be fount at \url{https://www.rosin-project.eu/software-quality-assurance}.}, this master project has to incorporate software engineering best practices such as continuous integration \cite{meyer_continuous_2014}, unit testing and code reviews. Those practices are fully utilized throughout the whole project, and they will be briefly explained here.
