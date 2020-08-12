@@ -2,7 +2,7 @@
 \label{chap:introduction}
 \shorttitle{\nameref{chap:introduction}}
 
-This project's motivation is to close the loop between the simulation and the physical world in a robotics application and allow an effortless algorithm transfer from a robot to a robot in general.
+This project's motivation is to close the loop between the simulation and the physical world in a robotics application and allow an effortless algorithm to different simulated robots.
 The project aims to utilize \ac{ros2}, the second iteration of a popular robotics framework, to develop a standard interface for a range of different robots including physical and simulated e-puck2 robots.
 
 \section{Problem Statement}
@@ -15,7 +15,7 @@ The solution should be easy to integrate into the simulation and not cause a sig
 Another challenge roboticists are facing is code reuse. 
 In the world of diverse hardware solutions for robots, it is hard to create a modular software solution that can be reused on different robotics platforms.
 For example, navigation, \ac{slam}, and localization are only a few algorithms widely used in mobile robotics, and many mobile robots could reuse that.
-The researchers need modular, reusable software to share robot controllers among colleges.
+The researchers need modular, reusable software to share robot controllers among colleagues.
 Then, the researchers can evaluate and compare the controller on different robots \cite{vaughan_really_2007}.
 As for the previous challenge, the solution must be easily integrated into the simulation and not cause significant computational overhead.
 In order to demonstrate the flexibility of the proposed solution, it will be implemented for the e-puck2 physical and simulated robot.
@@ -40,7 +40,7 @@ As a result, a user should have a development workflow, as shown in Fig. \ref{fi
     \caption[A development workflow (in robotics) that has to be achieved with the proposed solution]{
         A development workflow (in robotics) that has to be achieved with the proposed solution.
         The circle represents a piece of software that the user wants to develop to control the robot, and it is the same in each scenario.
-        The dashed arrows are transitions in the development workflow, while solid the solid arrows represent a network protocol.
+        The dashed arrows are transitions in the development workflow, while the solid arrows represent a network protocol.
     }
     \label{fig:introduction:desired_workflow}
 \end{figure}
@@ -74,7 +74,7 @@ Therefore, the project is presented as follows:
     \item \textbf{Chapter \ref{chap:background}: \nameref{chap:background}} gives the theoretical background on common concepts, and software and hardware technologies, utilized in the project.
     Also, it clarifies relations with relevant projects.
     
-    \item \textbf{Chapter \ref{chap:simulation}: \nameref{chap:simulation}} explains a process used to create a \ac{ros2} node that exposes access to simulated e-puck2 robot's sensors and actuators through \ac{ros2} interface.
+    \item \textbf{Chapter \ref{chap:simulation}: \nameref{chap:simulation}} explains a process used to create a \ac{ros2} node that exposes access to simulated the e-puck2 robot's sensors and actuators through \ac{ros2} interface.
     
     \item \textbf{Chapter \ref{chap:physical}: \nameref{chap:physical}} has a goal to explain implementation of the same \ac{ros2} interface for e-puck2 physical robot.
     

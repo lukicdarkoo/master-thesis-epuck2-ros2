@@ -19,18 +19,11 @@
 \newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
 \SetCommentSty{mycommfont}
 
-% Configuration for chapter that will be shown
-\newtoggle{FULL_REPORT}
-\toggletrue{FULL_REPORT}
-%\togglefalse{FULL_REPORT}
-
-% for reviewing
-\definecolor{green4}{RGB}{0,128,0}
-\newcommand{\note}[1]{\textcolor{green4}{\textbf{NOTE:} [{#1}]}}
-
-
 % Configuration for `acro`
 \input{_acronyms}
+
+% Command `keywords`
+\providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1}
 
 \title{ROS2 Programming Interface for the E-puck2 Robot}
 \shorttitle{ROS2 Programming Interface for the E-puck2 Robot}
@@ -51,20 +44,31 @@
 \maketitle
 
 \newpage
+\
+\newpage
+
+\input{abstract}
+
+\newpage
 \tableofcontents
 \newpage
 
 \printacronyms
 
-\iftoggle{FULL_REPORT}{\input{abstract}}{}
-\iftoggle{FULL_REPORT}{\input{introduction/introduction}}{}
-\iftoggle{FULL_REPORT}{\input{background/background}}{}
-\iftoggle{FULL_REPORT}{\input{simulation/simulation}}{}
-\iftoggle{FULL_REPORT}{\input{physical/physical}}{}
-\iftoggle{FULL_REPORT}{\input{demos/demos}}{}
+
+
+\listoffigures
+
+\listoftables
+
+\input{introduction/introduction}
+\input{background/background}
+\input{simulation/simulation}
+\input{physical/physical}
+\input{demos/demos}
 \input{generalization/generalization}
-\iftoggle{FULL_REPORT}{\input{results/results}}{}
-\iftoggle{FULL_REPORT}{\input{conclusion/conclusion}}{}
+\input{results/results}
+\input{conclusion/conclusion}
 
 \cleardoublepage
 \addcontentsline{toc}{chapter}{Bibliography}

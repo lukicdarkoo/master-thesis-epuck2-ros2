@@ -8,7 +8,7 @@ All demos presented in this chapter work with both the physical and simulated e-
 Some demos are also successfully tested with a few other simulated robots.
 
 \section{Visualizations}
-\acs{rviz2} acts as a \ac{ros2} node, and it allows users to visualize the robot's state and robot's perception of the environment in 3D.
+\acs{rviz2} acts as a \ac{ros2} node, and it allows users to visualize the robot's state and perception of the environment in 3D.
 This tool is officially supported and developed by the \ac{ros2} team; it is commonly used in \ac{ros2} applications for visualizations and is extensively utilized throughout this project. 
 Therefore, a few use-cases will be given here.
 
@@ -36,13 +36,13 @@ Typical systematic error is uncertainty about the wheelbase and means that the r
 Therefore, we use \texttt{/odom} and \texttt{/cmd\_vel} topics that are previously created to calibrate the two important constants for odometry.
 The technique is inspired by the one presented in \cite{borenstein_measurement_1996}; the robot should move linearly, we can compare anticipated distance (self-reported distance) with the actual distance.
 The linear movements allow us to adjust the wheel radius.
-For the wheelbase, the robot is rotated a predefined number of rotations; then, it is compared to the actual number of rotations, and wheelbase is adjusted accordingly (see Figure \ref{fig:demos:rviz}).
+For the wheelbase, the robot is rotated a predefined number of rotations; then, it is compared to the actual number of rotations, and wheelbase is adjusted accordingly (see Figure \ref{fig:demos:diff_drive_calibration}).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{demos/figures/calibration.pdf}
     \caption{Differential drive robot calibration process}
-    \label{fig:demos:rviz}
+    \label{fig:demos:diff_drive_calibration}
 \end{figure}
 
 The custom-created node continuously receives the readings from the \texttt{/odom} topic to stop the robot exactly when the robot reaches the goal position.

@@ -61,8 +61,8 @@ Although this is a necessary step for the real robots and allows users a lot of 
     \label{fig:generalization:universal_driver_within_webots}
 \end{figure}
 
-With the universal driver, a notion of devices is introduced.
-A device\footnote{Note that "device" is related to a module in the universal driver and "Webots device" is a node that represents a robot device in Webots.}, in this context, represent a module which transforms data from of one or more Webots devices to one or more \ac{ros2} topics and services.
+With the universal driver, a notion of a device is introduced.
+A device\footnote{Note that ``device" is related to a module in the universal driver and "Webots device" is a node that represents a robot device in Webots.}, in this context, represent a module which transforms data from of one or more Webots devices to one or more \ac{ros2} topics and services.
 By default, the universal driver will go through all Webots devices available in a robot and try to match them with a suitable device.
 If the match is found, a new device is instantiated, a Webots device is assigned to it, and the device will start publishing or subscribing to the \ac{ros2} messages.
 
@@ -258,11 +258,11 @@ The field \texttt{name} is always present for devices, and users can explicitly 
 
 As multiple intermediate Webots nodes can be neglected, the translation of child node ($I_0$) in respect to it's parent node ($I_N$) is defined as:
 \begin{equation}
-    \bm{T}_{I_0}^{I_N} = \sum_{i=0}^{N-1} \bm{T}_{I_i}^{I_{i+1}}
+    \bm{T}_{I_0}^{I_N} = \bm{T}_{I_0} + \sum_{i=1}^{N-1} \bm{R}_{I_{i-1}}^{I_i} \bm{T}_{I_i}^{I_{i+1}}
 \end{equation}
 whereas the translation of the intermediate node ($I_m$) in respect to it's parent ($I_n$) is represented by $ \bm{T}_{I_m}^{I_n} $ and consists of a three-dimensional vector.
 
-In order to determine a rotation between two relavant links we use:
+In order to determine a rotation between two relevant links we use:
 \begin{equation}
     \bm{R}_{I_0}^{I_N} = \prod_{i=0}^{N-1} \bm{R}_{I_i}^{I_{i+1}}
 \end{equation}

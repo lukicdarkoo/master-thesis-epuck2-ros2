@@ -29,7 +29,7 @@ There are a few important characteristics of each node:
 \begin{itemize}
     \item The node can be implemented in various programming languages, without affecting the other nodes.
     Being programming language agnostic allows developers to optimize the nodes for different behaviors.
-    For example, if the node has to be efficient or interact closely with the hardware C programming language may be more suitable.
+    For example, if the node has to be efficient or interact closely with the hardware, C programming language may be more suitable.
     Otherwise, if fast prototyping is important,  Python may be a better fit.
     As a result, community nodes are implemented in a programming language that fits best the node's purpose.
     \item The nodes can be run on different computers.
@@ -77,7 +77,7 @@ Mostly, communication between nodes is done through topics, but there other type
     \item Parameters allow nodes to be configured by the user or other nodes, on startup or during run-time.
     The underlying implementation is based on the previously explained services.
     I means the nodes can be configured over the network.
-    \item Actions are available since \ac{ros2}, and they are similar to the services.
+    \item Actions are available in \ac{ros} core since \ac{ros2}, and they are similar to the services.
     A difference is that the actions are optimized for requests that generally take longer to execute and need continuous feedback. A typical action can be, \textit{``Move the robot to the new position and while doing it, keep sending me a position''}.
 \end{itemize}
 
@@ -116,7 +116,7 @@ There are many more message group types, but those are the most relevant ones fo
 \subsection{\ac{ros} Distributions}
 
 \ac{ros} distributions is another vital aspect of the project.
-The newest \ac{ros} distribution, as of the time of witting this, is deliberately chosen.
+The newest \ac{ros} distribution (as of the time of writing the thesis) is deliberately chosen.
 The choice is will be described later, but first, \ac{ros} versioning has to be described.
 
 \ac{ros} team releases a new \ac{ros} distribution every six months, following Ubuntu's release cycle.
@@ -142,7 +142,7 @@ Finally, the master project is compatible with \ac{ros2} Eloquent Elusor and \ac
 
 \section{Robotics Platforms}
 The project's main objective is to introduce \ac{ros2} support for the e-puck2 physical and simulated robot, and other simulated robots while focusing on Khepera IV.
-Therefore, those two robots is will be described in more detail.
+Therefore, those two robots are will be described in more detail.
 
 \subsection{E-puck2}
 E-puck2 is the second generation of the e-puck robot\cite{mondada_e-puck_nodate}.
@@ -254,7 +254,7 @@ The simulator provides a development environment to model, program and simulate 
 
 The main Webots features are:
 \begin{itemize}
-    \item Robot/world editor: The models are stored in VRML97 format, allowing users to either change the document directly or through the Webots user interface. 
+    \item Robot/world editor: The models are stored in VRML97 format, allowing users to either change the document manually or through the Webots user interface. 
     The Webots world editor allows the users to see changes in the world immediately.
     It is possible to include pre-built models, and the users can choose among a huge library of models.
     \item Realistic simulation: The simulations produced in Webots are realistic compared to the similar products. 

@@ -123,7 +123,7 @@ It shows that even though there is no compression involved, just image publishin
 In contrast, there the images compressed with \ac{gpu} are the small and cumbersome process of compression is offloaded to \ac{gpu}, leaving \ac{cpu} with a minimal load.
 
 \subsection{Performance Comparison in Mapping}
-In Section \ref{sec:demos:mapping} a custom \ac{ros2} node for mapping is described. Here, it will be used by the e-puck2 physical and simulated robot for performance comparison. In that purpose, a physical map is created, as well as its digital copy in Webots (see Figure \ref{fig:results:camera_load}).
+In Section \ref{sec:demos:mapping} a custom \ac{ros2} node for mapping is described. Here, it will be used by the e-puck2 physical and simulated robot for performance comparison. In that purpose, a physical map is created, as well as its digital copy in Webots (see Figure \ref{fig:results:map}).
 
 \begin{figure}[H]
 \centering
@@ -140,7 +140,7 @@ In Section \ref{sec:demos:mapping} a custom \ac{ros2} node for mapping is descri
   \label{fig:results:map:map_real_world}
 \end{subfigure}
 \caption[Webots map used for the mapping benchmark]{Webots and physical map used for the mapping benchmark with room names and coordinate systems marked}
-\label{fig:results:camera_load}
+\label{fig:results:map}
 \end{figure}
 
 
@@ -151,7 +151,7 @@ All maps are saved as pictures, and the comparison of the maps is shown in Figur
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{./results/figures/map_comparison.pdf}
-    \caption{Comparison of the ground truth map, map created by physical robot (real-world) and map created by simulation robot (simulation)}
+    \caption{Comparison of the ground truth map, map created by physical robot (real-world) and map created by simulated robot (simulation)}
     \label{fig:results:map_comparison}
 \end{figure}
 
@@ -232,7 +232,7 @@ Therefore, in the figure you can see that the paths chosen by the physical and s
 In this experiment the goal is to verify whether the same \ac{ros2} controller can be used with different robots.
 As before, there are two tests.
 The first is with a custom mapping node and the second is with the \ac{ros2} community navigation packages.
-A map for this experiment had to be bigger to accommodate Khepera IV robot (see Figure \ref{ig:results:map_epuck_vs_khepera}).
+A map for this experiment had to be bigger to accommodate Khepera IV robot (see Figure \ref{fig:results:map_epuck_vs_khepera}).
 
 \begin{figure}[H]
     \centering
@@ -337,13 +337,13 @@ The table shows that the \ac{ros2} generalized driver managed to expose devices 
 \subsection{Going Beyond Khepera IV and E-puck2}
 
 The \ac{ros2} generalized driver is tested on many robots.
-In further text a two examples will be given, TIAGo++ and TurtleBot3 Burger.
+In further text, a two examples will be given, TIAGo++ and TurtleBot3 Burger.
 
 \subsubsection{TIAGo++ Robot}
 
 TIAGo++ robot is designed by PAL Robotics to work in indoor environments.
-Typically, the platform is used in research or light industry.
-To us the robot is interesting because it has a lot joints.
+Typically, the platform is used in research or light industry. 
+To us, the robot is interesting because it has a lot joints\footnote{A specific \ac{ros2} driver was already developed, but the universal driver presented in this thesis greatly extends its capabilities}.
 Therefore, it is a good test for the \ac{urdf} exporter.
 
 \begin{figure}[H]
@@ -396,4 +396,4 @@ In the figures bellow a RViz2 view for \ac{slam} (see Figure \ref{fig:results:tu
 \end{figure}
 
 The RViz2 views show that the TurtleBot3 package works as expected without any code modifications.
-Overall, these experiments show that the generalized \ac{ros2} driver scales well to all tested scenarious.
+Overall, these experiments show that the generalized \ac{ros2} driver scales well to all tested scenarios.

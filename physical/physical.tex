@@ -2,7 +2,7 @@
 \label{chap:physical}
 \shorttitle{\nameref{chap:physical}}
 
-Details about \ac{ros2} interface implementation on e-puck2 physical robot will be given in this chapter.
+Details about \ac{ros2} interface implementation on the e-puck2 physical robot will be given in this chapter.
 Even though the objective is to create the same \ac{ros2} interface as the one explained in the previous chapter, the implementation is very different.
 The difference mostly comes from the physical interface to the sensors and actuators, performance limitations, and \ac{cpu} architecture.
 Therefore, these differences will be emphasized in this chapter.
@@ -19,11 +19,11 @@ Pi-puck extension uses \ac{i2c} and \ac{usb} to communicate with sensors and act
 \end{figure}
 
 % TODO: Add https://pi-puck.readthedocs.io/en/latest/hardware/overview/
-Therefore, different communication channels are adopted for different sensors and actuators.
+Therefore, different communication channels are adopted for various sensors and actuators.
 \acp{led}, motors, and infrared sensors are connected to the on-board \ac{mcu}, allowing the Raspberry Pi Zero W to access the devices over \ac{i2c}.
 For the infrared sensors, this is necessary as Raspberry Pi Zero W does not have any \ac{dac} module. 
 Therefore, the \ac{mcu} acts as a slave which stands between analog sensors and actuators, or actuators that require deterministic updates (motors).
-With \ac{imu} and the \ac{tof} sensor, Raspberry Pi Zero Zero W communicates directly over \ac{i2c}, while with the camera the communication is done over \ac{usb}. 
+With \ac{imu} and the \ac{tof} sensor, Raspberry Pi Zero Zero W communicates directly over \ac{i2c}, while with the camera, the communication is done over \ac{usb}. 
 
 \begin{table}[H]
     \centering
@@ -76,12 +76,12 @@ The protocol used to communicate with the sensors is explained in the correspond
 
 \section{\ac{ros2} on Raspberry Pi OS}
 Before the \ac{ros2} driver is created, \ac{ros2} has to be installed on the Raspberry Pi Zero W.
-The Raspberry Pi Zero W board comes with \ac{cpu} with arm32 architecture and Raspberry Pi OS.
-This configuration is not officially supported by \ac{ros2} and standard installation procedure using \acs{os}' package manager doesn't work.
+The Raspberry Pi Zero W board contains \ac{cpu} with Arm32 architecture and Raspberry Pi OS.
+The \ac{ros2} does not officially support this configuration, and the standard installation procedure using \acs{os}' package manager doesn't work.
 The closest official support is a source compilation for Debian Buster placed as a tier 3 support\footnote{\ac{ros2} supported platforms are defined by REP 2000 available at \url{https://www.ros.org/reps/rep-2000.html\#foxy-fitzroy-may-2020-may-2023}.}.
 This means that \ac{ros2} has to be cross-compiled and that potential incompatibilities have to be manually resolved.
 
-Since the \ac{ros2} driver is intended for a wide range of users the installation procedure has to be user-friendly.
+Since the \ac{ros2} driver is intended for a wide range of users, the installation procedure has to be user-friendly.
 For that purpose, three installation procedures are created to fit different use-cases, using pre-configured \ac{sdcard}, compilation on Raspberry Pi Zero W, and cross-compilation from the user's \ac{pc}.
 A comparison of these methods is given by Table \ref{tab:physical:installation}.
 
@@ -104,7 +104,7 @@ A comparison of these methods is given by Table \ref{tab:physical:installation}.
     \end{adjustwidth}
 \end{table}
 
-Using the existing image with \ac{ros2} and other tools configured is the easiest approach for the users.
+Using the existing image with \ac{ros2} and other tools configured is the most accessible approach for the users.
 The problem appears once the user has to upgrade the \ac{ros2} version, install a new package, or to develop a custom package that has a lot of dependencies as compilation time is slow.
 For those use cases, cross-compilation tools are provided.
 
@@ -123,18 +123,18 @@ This means that the user doesn't need to worry about host \ac{os} and tools comp
 The typical setup of using the cross-compilation tools created in the scope of this project is shown in Figure \ref{fig:physical:cross_compilation}.
 Boxes in green represent directories while the others are software tools.
 \texttt{ros2\_ws} is the \ac{ros2} workspace, it contains source files, temporary build files and compiled output, libraries and executable.
-The source code available in this directory is compiled with cross-compilation tools in the Docker container while the result stays available on the host \ac{os}.
-% To build certain packages, compilers need filesystem of the Raspberry Pi Zero W (\texttt{rootfs}) to compile and link dependencies available on the board.
+The source code available in this directory is compiled with cross-compilation tools in the Docker container while the result stays present on the host \ac{os}.
+% To build specific packages, compilers need filesystem of the Raspberry Pi Zero W (\texttt{rootfs}) to compile and link dependencies available on the board.
 Both directories are available in the Docker container as well as on the host \ac{os}.
 
-Once the \ac{ros2} packages are compiled they can be used by copying them into the \texttt{ros\_ws/install} directory or by mounting them onto the Raspberry Pi Zero W.
-It is worth noting, however, that mounting the directory can significantly increase the productivity as the process of copying the files can be avoided.
+Once the \ac{ros2} packages are compiled, they can be used by copying them into the \texttt{ros\_ws/install} directory or by mounting them onto the Raspberry Pi Zero W.
+However, it is worth noting that mounting the directory can significantly increase productivity as copying the files is avoided.
 
 % TODO: Typical errors
 
 \section{Programming Language}
 Initially, a \ac{ros2} driver with a few basic features for the physical e-puck2 is implemented in Python.
-However, as the \ac{ros2} driver included more sensors the \ac{cpu} load was too high to handle other functionalities. Therefore, the implementation has been upgraded to C++ for the computational speedup.
+However, as the \ac{ros2} driver included more sensors, the \ac{cpu} load was too high to handle other functionalities. Therefore, the implementation has been upgraded to C++ for the computational speedup.
 
 \begin{figure}[H]
 \centering
@@ -156,18 +156,18 @@ However, as the \ac{ros2} driver included more sensors the \ac{cpu} load was too
 \footnotetext{The exact command to measure the load is \texttt{psrecord \$(pgrep epuck2\_driver) --interval 1 --plot plot.pdf --duration 60}}
 
 In Figure \ref{fig:physical:py_vs_cpp} the performances of both a Python and a C++ implementation of similarly implemented \ac{ros2} node that provides the same functionalities are given.
-More precisely, they both publish odometry data, measurements from eight distance sensors, laser scan, and they are both subscribed to the velocity control topic.
-In the figure, we can observe that \ac{cpu} usage is three times lower while \ac{ram} is almost two times lower for C++.
+More precisely, they both publish odometry data, measurements from eight distance sensors (including the virtual laser scanner), and they are both subscribed to the velocity control topic.
+In the figure, we can observe that \ac{cpu} usage is three times lower, while \ac{ram} is almost two times lower for C++.
 This analysis in early stage of implementation steered the development towards C++\footnote{One of the bottlenecks was in the \ac{ros2} client library for Python (\texttt{rclpy}) related to timer implementation - \url{https://github.com/ros2/rclpy/issues/520}. Fixing it improved the performances, but C++ implementation was still more efficient.}.
 
 \section{Camera}
 As mentioned before, the camera available on e-puck2 (Omnivision OV7670 CMOS) captures images at 15 \acs{fps} in a resolution of 640x480.
-Compared to the simulation, data produced by the camera has to be efficiently processed and intrinsic camera parameters have to be determined.
+Compared to the simulation, data produced by the camera has to be efficiently processed, and intrinsic camera parameters have to be determined.
 
 \subsection{Camera Optimization}
 Our preliminary investigation showed that the \ac{ros2} driver wasn't able to publish images more frequently than 3-4 \acs{fps} (a more thorough analysis is available in Chapter \ref{chap:results}).
 Publishing raw (uncompressed) images would cause the network to become a bottleneck while compressing the images before transmitting would put a high \ac{cpu} load, effectively limiting \ac{fps}.
-Fortunately, there is \ac{gpu} available on Raspberry Pi Zero W on which certain image manipulation tasks can be offloaded.
+Fortunately, there is \ac{gpu} available on Raspberry Pi Zero W on which specific image manipulation tasks can be offloaded.
 
 \subsubsection{Introduction}
 A brief overview on \ac{gpu} on Raspberry Pi Zero W will be given first. The typical architecture of the \ac{gpu} and the related components is given in the following figure (Figure \ref{fig:physical:gpu_architecture}):
@@ -180,16 +180,16 @@ A brief overview on \ac{gpu} on Raspberry Pi Zero W will be given first. The typ
 \end{figure}
 
 In the figure, there are three main components on the \ac{soc}: \ac{cpu}, \ac{gpu} and \ac{ram}.
-The \ac{gpu} has it's own computational components dedicated for different image processing tasks.
-These components are orchestrated by \ac{vcos} (abstraction layer on top of an \ac{rtos}) which also reads images from the camera.
+The \ac{gpu} has it's own computational components dedicated to different image processing tasks.
+These components are orchestrated by \ac{vcos} (abstraction layer on top of an \ac{rtos}), which also reads images from the camera.
 Signaling between \ac{cpu} and \ac{gpu} is done through \ac{vchi} while the images are shared by storing them on the \ac{ram}.
 From a software point of view, the \ac{mmal} library is used to interact with the \ac{gpu}.
-The library is based on \ac{omx} and the goal is to ensure consistent interface across all \acp{gpu} available in different models of Raspberry Pi.
-For comprehensive explanation about hardware blocks, please refer to \cite{jones_videocore_nodate-1} and for software \cite{jones_videocore_nodate}, both are great sources of information.
+The library is based on \ac{omx}, and the goal is to ensure consistent interface across all \acp{gpu} available in different models of Raspberry Pi.
+For a comprehensive explanation about hardware blocks, please refer to \cite{jones_videocore_nodate-1}, and for software \cite{jones_videocore_nodate}, both are excellent sources of information.
 
 \subsubsection{\ac{ros2} Camera Driver Implementation}
 There are a few available \ac{ros1} and \ac{ros2} packages that implement \ac{gpu} accelerated image acquisition and processing.
-Unfortunately, these packages expect the camera to be connected via \ac{csi} which is not the case in e-puck2. 
+Unfortunately, these packages expect the camera to be connected via \ac{csi}, which is not the case in e-puck2. 
 Therefore, the whole \ac{ros2} camera node is implemented from scratch, including image acquisition based on \acs{v4l2} and image processing (compression and resizing) based on \ac{mmal}.
  
  \begin{figure}[H]
@@ -201,8 +201,8 @@ Therefore, the whole \ac{ros2} camera node is implemented from scratch, includin
  
 Figure \ref{fig:physical:camera_software_architecture} shows a software architecture of the camera node. 
 Initially, the camera is configured over \ac{i2c} (block \texttt{OV7670}) and then \ac{v4l2} is used to initiate an image capture and store it to the \ac{ram}.
-The pointer to the image is passed through \ac{mmal} block which interacts with the \ac{gpu} to compress and resize it. 
-Finally, the \ac{gpu} stores the processed image to the \ac{ram} and the pointer the processed image is available to the \ac{ros2} camera node.
+The pointer to the image is passed through \ac{mmal} block, which interacts with the \ac{gpu} to compress and resize it. 
+Finally, the \ac{gpu} stores the processed image to the \ac{ram}, and the pointer the processed image is available to the \ac{ros2} camera node.
 The node packs it into the corresponding messages type and publishes it.
  
  \subsubsection{\ac{ros2} Camera Driver Usage}
@@ -210,22 +210,29 @@ The node packs it into the corresponding messages type and publishes it.
  
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{physical/figures/camera_ros_images.pdf}
+    \includegraphics[width=1\textwidth]{physical/figures/camera_ros_images.pdf}
     \caption{Image flow within \ac{ros2} application}
     \label{fig:physical:camera_ros_images}
 \end{figure}
 
-Figure \ref{fig:physical:camera_ros_images} shows typical flow of images within \ac{ros2} application.
-The camera node will publish \acs{rgb} or \acs{jpeg} compressed images depending on which topic a user is subscribed to.
-From the user's perspective \ac{rgb} images desired as pixel-wise operations can be done directly, without decompression.
-Therefore, if a user has a custom node running on the Raspberry Pi Zero W the user should subscribe to \ac{rgb} images.
-Otherwise, if the user wants to use on the workstation the user should run \texttt{image\_transport/republish} node besides.
-The node decompresses the images on the workstation and publishes \ac{rgb} to all local nodes.
-This way, a custom node by the user will not change and the only additional action that the user has to do if working on the workstation is running \texttt{image\_transport/republish} node.
+Figure \ref{fig:physical:camera_ros_images} shows typical flow of raw, compressed, and uncompressed images within \ac{ros2} application.
+The general idea is to make a compromise between network utilization (less bandwidth is used if compressed images are transferred) and \ac{cpu} load (it less \ac{cpu} intensive to avoid image compression).
+Therefore, the camera node advertises two topics, one with \acs{rgb} (raw) images and other with \acs{jpeg} (compressed) images.
+A user can subscribe to any of those two, and the node will start publishing corresponding images to it.
+Usually, the optimal approach is to publish \ac{rgb} images locally and \acs{jpeg} images over the network.
+The \ac{rgb} images are consumed normally, but \acs{jpeg} images have to be received by intermediate node (usually performed by \ac{ros2} node called \texttt{image\_transport/republish}), uncompressed and published locally.
+The \texttt{image\_transport/republish} node supplies all nodes available on the workstation.
+It is an especially convenient solution when there are many nodes on the workstation as the images are transferred only once through the network (nodes on the workstation consume images from the \texttt{image\_transport/republish} node).
+
  
 \subsubsection{Camera Calibration}
-In comparison with \ac{ros2} node for the simulated robot intrinsic parameters of the Omnivision OV7670 camera are not known.
-These parameters can be found through a calibration process. The process consists of capturing many images, which is known as the physical position of points, and then performing non-linear optimization to find parameters that project these points from the 3D world to 2D plane \cite{lukic_dual_nodate}. This process is automated by creating a custom \ac{ros2} node that relies on OpenCV's calibration module.
+Intrinsic camera parameters of the Omnivision OV7670 camera (available on the e-puck2 physical robot) are not known.
+These parameters can be found through a camera calibration process.
+To perform the camera calibration, we have to capture multiple images of 3D points that have known positions in the real world.
+The camera projects the points to the camera frame (2D) that can be modeled as equidistance projection ($r = f\theta$, where $f$ is focal length, $r$ radial distance, and $\theta$ angle) and parametrized with a projection matrix (a matrix that contains intrinsic parameters).
+The 3D points from the real-world and the corresponding 2D points projected on the camera frame represent a dataset used for the camera calibration.
+Then, we use non-linear optimization to find the projection matrix's values that minimize a position difference of obtained and expected 2D points in the camera frame \cite{lukic_dual_nodate}. 
+This process is automated by creating a custom \ac{ros2} node that relies on OpenCV's calibration module.
 
 \subsection{Differential Drive}
 Besides the performance limitations of the Raspberry Pi Zero W that cause issues, there are other limitations as well. In the case of odometry, in Table \ref{tab:physical:rpi_to_mcu}, you can notice that the number of ticks for the left and the right wheel is limited to 2 bytes. Taking into account that it is a signed number (can take a value from -32767 to 32767) and that there are 1000 ticks per revolution it can make around 32 revolutions before overflow (or $ 2 \pi R \frac{32767}{1000} = 4.11m $). This means that the robot's odometry will become completely wrong after around 4 meters. To avoid this, the following simple approach is applied:
@@ -261,12 +268,12 @@ $ T_{ticks} \leftarrow 2^{16} N_{overflow} + C_{ticks} $\;
 By applying Alg. \ref{alg:physical:overflow}, in $ T_{ticks} $ a total number of ticks will be stored, taking overflows into the consideration. It is important set $ N_{grace} $ reasonably big such that $ |P_{ticks} - C_{ticks}| > N_{grace} $ is only true when the overflow occurs.
 
 \section{Software Quality Assurance}
-As a part of ROSIN\footnote{The Software Quality Assurance propositions of ROSIN project can be fount at \url{https://www.rosin-project.eu/software-quality-assurance}.}, this master project has to incorporate software engineering best practices such as continuous integration \cite{meyer_continuous_2014}, unit testing and code reviews. Those practices are fully utilized throughout the whole project and they will be briefly explained here.
+As a part of ROSIN\footnote{The Software Quality Assurance propositions of the ROSIN project can be fount at \url{https://www.rosin-project.eu/software-quality-assurance}.}, this master project has to incorporate software engineering best practices such as continuous integration \cite{meyer_continuous_2014}, unit testing and code reviews. Those practices are fully utilized throughout the whole project, and they will be briefly explained here.
 
 \subsection{\ac{ros2} Node Unit Tests}
 
 The unit tests are implemented according to the standard procedure recommended by \ac{ros2}.
-Two \ac{ros2} nodes are executed, one node is the actual node we want to test while the other one simulates the rest of the application and executes tests. 
+Two \ac{ros2} nodes are executed, one node is the actual node we want to test while the other simulates the rest of the application and runs tests. 
 
 \begin{figure}[H]
     \centering
@@ -280,7 +287,7 @@ In the figure, \ac{ros2} test node is used to emulate the rest of the \ac{ros2} 
 For example, it can publish a message to \texttt{/cmd\_vel} and set angular velocity.
 The \ac{ros2} driver should receive the message and send corresponding motor velocity through \ac{i2c}.
 To verify whether proper commands are sent over \ac{i2c} a special \ac{i2c} module is created.
-It implements two modes, in regular mode it interacts with \ac{i2c} directly while in the testing mode, it writes everything to the filesystem. 
+It implements two modes; in regular mode, it interacts with \ac{i2c} directly while in the testing mode, it writes everything to the filesystem. 
 This way, \ac{ros2} test node has an opportunity to test commands addressed to the \ac{i2c}.
 
 All unit tests are based on Python's standard unit testing framework \texttt{unittest} and \ac{ros}' \texttt{launch\_test}.
@@ -299,10 +306,8 @@ The following tests are used to perform code quality analysis:
     \item \texttt{copyright} checks if the copyright header is present in the files.
 \end{itemize}
 
-All tests are performed on almost all files available in the source code. 
-
 \subsection{\acl{ci}}
 Unit tests, code quality tests, and more are executed in the scope of \ac{ci}.
-It means that the source code is stored in Git repository and that series of tests are executed every time a new change is pushed.
-In particular, every time a new commit is pushed, a Docker container is created, a \ac{ros2} environment is created, static code analysis is done, the package is built and the packages are unit tested.
-If any of these actions fail the whole test is considered a failure and a developer is forced to fix the error.
+It means that the source code is stored in Git repositories, and that series of tests are executed every time a new change is pushed.
+In particular, every time a new commit is pushed, a Docker container is created, a \ac{ros2} environment is configured, static code analysis is done, the packages are built, and unit tested.
+If any of these actions fail, the whole test is considered a failure, and a developer is forced to fix the error.

@@ -4,7 +4,7 @@
 
 As previously explained, one of the project's objectives is to create a \ac{ros2} interface for simulated e-puck2 robots.
 Even though creating \ac{ros2} interface for Webots robots is automated later in the project, specific \ac{ros2} driver for the e-puck2 in Webots is created first.
-For us as developers, creating the specific \ac{ros2} driver was necessary to understand better building blocks that can be generalized.
+For us, as developers, creating the specific \ac{ros2} driver was necessary to understand better building blocks that can be generalized.
 To readers, this chapter will help better understand improvements brought by generalization (see Chapter \ref{chap:generalization}).
 It will also show that some devices cannot be generalized, e.g., distance sensors cannot feed the \texttt{LaserScan} topic.
 
@@ -13,8 +13,8 @@ It will also show that some devices cannot be generalized, e.g., distance sensor
 Before going to implementation details, it is important to understand the concept of a controller in Webots and how it fits in \ac{ros2} driver for Webots simulated robots.
 The Webots controller controls actuators and reads data from sensors available in a robot.
 The controller is a "brain" of the robot; it makes the robot move and senses the environment.
-It consists of two parts, the Webots \ac{api}, which communicates with the simulation and user-defined code that uses that Webots \ac{api} to control the robot.
-The Webots \ac{api} communicates with the Webots simulation through pipes, a type of inter-process communication \cite{kashyian_portable_2008}.
+It consists of two parts, the Webots \ac{api}, which communicates with the simulation and user-defined code that uses Webots \ac{api} to control the robot.
+The Webots \ac{api} communicates with the Webots simulation through pipes and shared memory, a type of inter-process communication \cite{kashyian_portable_2008}.
 Therefore, there are two processes that run independently, Webots controller and Webots simulation (see Fig. \ref{fig:simulation:webots_user_code_and_api}).
 
 \begin{figure}[H]
