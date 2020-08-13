@@ -2,31 +2,31 @@
 \label{chap:conclusion}
 \shorttitle{\nameref{chap:conclusion}}
 
-A \ac{ros2} interfaces are developed for the e-puck2 physical robot and a variety of simulated robots.
+\ac{ros2} interfaces are developed for the e-puck2 physical robot and a variety of simulated robots.
 A Webots support for \ac{ros2} is improved, providing facilities for automatic creation of a \ac{ros2} interface for various robot models.
 The \ac{ros2} interfaces provide a firm abstraction over the robot's simulated and physical hardware. 
 Thus, the \ac{ros2} interface allows a \ac{ros2} controller to work with the physical or simulate e-puck2 robot, or with any other simulated robot, without changes needed to the \ac{ros2} controller.
 The results prove that researchers can quickly validate their \ac{ros2} controllers on the e-puck2 physical or simulated robot and other Webots simulated robots.
-Effectively, closing the loop between the simulation and the physical world.
+Effectively closing the loop between the simulation and the physical world.
 
 The thesis summarizes the implementation details of a \ac{ros2} driver for Webots.
-It shows how Webots distance sensors, \ac{imu} related sensors, \acp{led}, a camera, motors and encoders are mapped into \ac{ros2} interface.
+It shows how Webots distance sensors, \ac{imu} related sensors, \acp{led}, cameras, motors, and encoders are mapped into \ac{ros2} interface.
 It introduces how odometry, velocity control, and coordinate frames are generated from basic Webots devices, such as motors and encoders.
 
 The \ac{ros2} driver is also developed for the e-puck2 physical robot, and major challenges in its implementation are given.
 It provides a solution to various problems originated from a low-performance computer with an Armv6 architecture. 
-Most notably, the tackled challenges are cross-compilation, offloading image compression to \ac{gpu}, unit-testing in \ac{ci} (with x86 architecture), and overall performance issues.
+Most notably, the tackled challenges are cross-compilation, offloading image compression to \ac{gpu}, unit testing in \ac{ci} (with x86 architecture), and overall performance issues.
 
 A possibility to automate the creation of \ac{ros2} interface for Webots is observed.
 Therefore, a universal \ac{ros2} driver for Webots is developed.
 New features are introduced to Webots core to allow automatic creation of the \ac{ros2} interface, most notably \ac{urdf} export.
-On top of the Webots, a modular software layer is implemented that performs \ac{api} conversion, from Webots to \ac{ros2}.
+On top of the Webots, a modular software layer is implemented that performs \ac{api} conversion from Webots to \ac{ros2}.
 
-The whole project is publicly available on GitHub allowing users and us to further improve it:
+The whole project is publicly available on GitHub, allowing users and us to further improve it:
 \begin{itemize}
     \item Webots to \ac{ros2} conversion layer covers the following Webots nodes: \texttt{Camera}, \texttt{DistanceSensor}, \texttt{Accelerometer}, \texttt{Gyro}, \texttt{InertialUnit}, \texttt{LED}, \texttt{Lidar}, \texttt{LightSensor}, \texttt{Robot}, \texttt{Motor} and \texttt{PositionSensor}. The list of the covered nodes is not exhaustive and more of them should be covered.
-    \item \ac{urdf} export does not support visual elements, although the visual elements are useful in RViz2 visualizations. Also, it does not support \texttt{Hinge2Joint}, nor \texttt{BallJoint}.
-    \item In certain use-cases pi-puck extension is not necessary and \ac{ros2} could be deployed directly to the \ac{mcu}.
+    \item \ac{urdf} export does not support visual elements, although the visual elements are useful in RViz2 visualizations. Moreover, it does not support \texttt{Hinge2Joint}, nor \texttt{BallJoint}.
+    \item In certain use cases pi-puck extension is not necessary and \ac{ros2} could be deployed directly to the \ac{mcu}.
     This will reduce battery usage and overall system complexity, but it will also put limitations such as a dynamic discovering of communication entities within a network.
-    \item Additional effort should be put in implementing \ac{ros2} package with \ac{slam} for e-puck2 and similar robots (robots with few distance sensors, that have a very limited range and wide \ac{fov}). 
+    \item Additional effort should be put in implementing \ac{ros2} package with \ac{slam} for e-puck2 and similar robots (robots with few distance sensors which have a very limited range and wide \ac{fov}). 
 \end{itemize}

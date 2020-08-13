@@ -82,7 +82,7 @@ The closest official support is a source compilation for Debian Buster placed as
 This means that \ac{ros2} has to be cross-compiled and that potential incompatibilities have to be manually resolved.
 
 Since the \ac{ros2} driver is intended for a wide range of users, the installation procedure has to be user-friendly.
-For that purpose, three installation procedures are created to fit different use-cases, using pre-configured \ac{sdcard}, compilation on Raspberry Pi Zero W, and cross-compilation from the user's \ac{pc}.
+For that purpose, three installation procedures are created to fit different use cases, using preconfigured \ac{sdcard}, compilation on Raspberry Pi Zero W, and cross-compilation from the user's \ac{pc}.
 A comparison of these methods is given by Table \ref{tab:physical:installation}.
 
 \begin{table}[H]
@@ -111,7 +111,7 @@ For those use cases, cross-compilation tools are provided.
 \subsection{\ac{ros2} Cross-compilation}
 In the scope of the project, tools are built to help with the process of \ac{ros2} cross-compilation.
 All cross-compilation dependencies and configurations are packaged into a Docker container\footnote{An in-depth guide about the \ac{ros2} cross-compilation is available at \url{https://github.com/cyberbotics/epuck_ros2/tree/master/installation/cross_compile}.}.
-This means that the user doesn't need to worry about host \ac{os} and tools compatibility. 
+This means that the user does not need to worry about host \ac{os} and tools compatibility. 
 
 \begin{figure}[H]
     \centering
@@ -121,8 +121,8 @@ This means that the user doesn't need to worry about host \ac{os} and tools comp
 \end{figure}
 
 The typical setup of using the cross-compilation tools created in the scope of this project is shown in Figure \ref{fig:physical:cross_compilation}.
-Boxes in green represent directories while the others are software tools.
-\texttt{ros2\_ws} is the \ac{ros2} workspace, it contains source files, temporary build files and compiled output, libraries and executable.
+The boxes in green represent directories while the others are software tools.
+\texttt{ros2\_ws} is the \ac{ros2} workspace, it contains source files, temporary build files, and compiled output (libraries and executables).
 The source code available in this directory is compiled with cross-compilation tools in the Docker container while the result stays present on the host \ac{os}.
 % To build specific packages, compilers need filesystem of the Raspberry Pi Zero W (\texttt{rootfs}) to compile and link dependencies available on the board.
 Both directories are available in the Docker container as well as on the host \ac{os}.
@@ -155,10 +155,10 @@ However, as the \ac{ros2} driver included more sensors, the \ac{cpu} load was to
 \end{figure}
 \footnotetext{The exact command to measure the load is \texttt{psrecord \$(pgrep epuck2\_driver) --interval 1 --plot plot.pdf --duration 60}}
 
-In Figure \ref{fig:physical:py_vs_cpp} the performances of both a Python and a C++ implementation of similarly implemented \ac{ros2} node that provides the same functionalities are given.
+Figure \ref{fig:physical:py_vs_cpp} shows performances of two \ac{ros2} nodes with the same set of features, but in different programming languages, Python and C++.
 More precisely, they both publish odometry data, measurements from eight distance sensors (including the virtual laser scanner), and they are both subscribed to the velocity control topic.
 In the figure, we can observe that \ac{cpu} usage is three times lower, while \ac{ram} is almost two times lower for C++.
-This analysis in early stage of implementation steered the development towards C++\footnote{One of the bottlenecks was in the \ac{ros2} client library for Python (\texttt{rclpy}) related to timer implementation - \url{https://github.com/ros2/rclpy/issues/520}. Fixing it improved the performances, but C++ implementation was still more efficient.}.
+This analysis in the early stage of implementation steered the development towards C++\footnote{One of the bottlenecks was in the \ac{ros2} client library for Python (\texttt{rclpy}) related to timer implementation - \url{https://github.com/ros2/rclpy/issues/520}. Fixing it improved the performances, but C++ implementation was still more efficient.}.
 
 \section{Camera}
 As mentioned before, the camera available on e-puck2 (Omnivision OV7670 CMOS) captures images at 15 \acs{fps} in a resolution of 640x480.
@@ -180,8 +180,8 @@ A brief overview on \ac{gpu} on Raspberry Pi Zero W will be given first. The typ
 \end{figure}
 
 In the figure, there are three main components on the \ac{soc}: \ac{cpu}, \ac{gpu}, and \ac{ram}.
-The \ac{gpu} has it's own computational components dedicated to different image processing tasks.
-These components are orchestrated by \ac{vcos} (abstraction layer on top of an \ac{rtos}), which also reads images from the camera.
+The \ac{gpu} has its own computational components dedicated to different image processing tasks.
+These components are orchestrated by \ac{vcos} (an abstraction layer on top of an \ac{rtos}), which also reads images from the camera.
 Signaling between \ac{cpu} and \ac{gpu} is done through \ac{vchi} while the images are shared by storing them on the \ac{ram}.
 From a software point of view, the \ac{mmal} library is used to interact with the \ac{gpu}.
 The library is based on \ac{omx}, and the goal is to ensure consistent interface across all \acp{gpu} available in different models of Raspberry Pi.
@@ -215,27 +215,27 @@ The node packs it into the corresponding messages type and publishes it.
     \label{fig:physical:camera_ros_images}
 \end{figure}
 
-Figure \ref{fig:physical:camera_ros_images} shows typical flow of raw, compressed, and uncompressed images within \ac{ros2} application.
+Figure \ref{fig:physical:camera_ros_images} shows a typical flow of raw, compressed, and uncompressed images within \ac{ros2} application.
 The general idea is to make a compromise between network utilization (less bandwidth is used if compressed images are transferred) and \ac{cpu} load (it less \ac{cpu} intensive to avoid image compression).
-Therefore, the camera node advertises two topics, one with \acs{rgb} (raw) images and other with \acs{jpeg} (compressed) images.
+Therefore, the camera node advertises two topics, one with \acs{rgb} (raw) images and the other with \acs{jpeg} (compressed) images.
 A user can subscribe to any of those two, and the node will start publishing corresponding images to it.
 Usually, the optimal approach is to publish \ac{rgb} images locally and \acs{jpeg} images over the network.
-The \ac{rgb} images are consumed normally, but \acs{jpeg} images have to be received by intermediate node (usually performed by \ac{ros2} node called \texttt{image\_transport/republish}), uncompressed and published locally.
+The \ac{rgb} images are consumed normally, but \acs{jpeg} images have to be received by an intermediate node (usually performed by \ac{ros2} node called \texttt{image\_transport/republish}), uncompressed and published locally.
 The \texttt{image\_transport/republish} node supplies all nodes available on the workstation.
 It is an especially convenient solution when there are many nodes on the workstation as the images are transferred only once through the network (nodes on the workstation consume images from the \texttt{image\_transport/republish} node).
 
  
 \subsubsection{Camera Calibration}
-Intrinsic camera parameters of the Omnivision OV7670 camera (available on the e-puck2 physical robot) are not known.
+The intrinsic camera parameters of the Omnivision OV7670 camera (available on the e-puck2 physical robot) are not known.
 These parameters can be found through a camera calibration process.
 To perform the camera calibration, we have to capture multiple images of 3D points that have known positions in the real world.
 The camera projects the points to the camera frame (2D) that can be modeled as equidistance projection ($r = f\theta$, where $f$ is focal length, $r$ radial distance, and $\theta$ angle) and parametrized with a projection matrix (a matrix that contains intrinsic parameters).
-The 3D points from the real-world and the corresponding 2D points projected on the camera frame represent a dataset used for the camera calibration.
-Then, we use non-linear optimization to find the projection matrix's values that minimize a position difference of obtained and expected 2D points in the camera frame \cite{lukic_dual_nodate}. 
+The 3D points from the real world and the corresponding 2D points projected on the camera frame represent a dataset used for the camera calibration.
+Then, we use nonlinear optimization to find the projection matrix's values that minimize a position difference of obtained and expected 2D points in the camera frame \cite{lukic_dual_nodate}. 
 This process is automated by creating a custom \ac{ros2} node that relies on OpenCV's calibration module.
 
 \subsection{Differential Drive}
-Besides the performance limitations of the Raspberry Pi Zero W that cause issues, there are other limitations as well. In the case of odometry, in Table \ref{tab:physical:rpi_to_mcu}, you can notice that the number of ticks for the left and the right wheel is limited to 2 bytes. Taking into account that it is a signed number (can take a value from -32767 to 32767) and that there are 1000 ticks per revolution it can make around 32 revolutions before overflow (or $ 2 \pi R \frac{32767}{1000} = 4.11m $). This means that the robot's odometry will become completely wrong after around 4 meters. To avoid this, the following simple approach is applied:
+Besides the performance limitations of the Raspberry Pi Zero W that cause issues, there are other limitations as well. In the case of odometry, in Table \ref{tab:physical:rpi_to_mcu}, you can notice that the number of ticks for the left and the right wheel is limited to 2 bytes. Taking into account that it is a signed number (can take a value from -32767 to 32767) and that there are 1000 ticks per revolution, it can make around 32 revolutions before overflow (or $ 2 \pi R \frac{32767}{1000} = 4.11m $). This means that the robot's odometry will become completely wrong after around 4 meters. To avoid this, the following simple approach is applied:
 
 \vspace*{.4cm}
 \begin{algorithm}[H]
@@ -285,18 +285,18 @@ Two \ac{ros2} nodes are executed, one node is the actual node we want to test wh
 A concrete example for testing of the \ac{ros2} driver is given in Figure \ref{fig:physical:mocking}.
 In the figure, \ac{ros2} test node is used to emulate the rest of the \ac{ros2} application.
 For example, it can publish a message to \texttt{/cmd\_vel} and set angular velocity.
-The \ac{ros2} driver should receive the message and send corresponding motor velocity through \ac{i2c}.
-To verify whether proper commands are sent over \ac{i2c} a special \ac{i2c} module is created.
-It implements two modes; in regular mode, it interacts with \ac{i2c} directly while in the testing mode, it writes everything to the filesystem. 
+The \ac{ros2} driver should receive the message and send the corresponding motor velocity through \ac{i2c}.
+To verify whether proper commands are sent over \ac{i2c}, a special \ac{i2c} module is created.
+It implements two modes; in the regular mode, it interacts with \ac{i2c} directly, while in the testing mode, it writes everything to the filesystem. 
 This way, \ac{ros2} test node has an opportunity to test commands addressed to the \ac{i2c}.
 
-All unit tests are based on Python's standard unit testing framework \texttt{unittest} and \ac{ros}' \texttt{launch\_test}.
+All unit tests are based on Python's standard unit testing framework, \texttt{unittest}, and \ac{ros}' \texttt{launch\_test}.
 
 \subsection{Code Quality Tests}
 Besides the unit tests, many tests for static code analysis are used as well.
 The following tests are used to perform code quality analysis:
 \begin{itemize}
-    \item \texttt{cppcheck} detects undefined behavior (e.g. dead pointers, division by zero or integer overflows) and security issues (e.g. buffer errors and information leaks) in C++ code.
+    \item \texttt{cppcheck} detects undefined behavior (e.g., dead pointers, division by zero or integer overflows) and security issues (e.g., buffer errors and information leaks) in C++ code.
     \item \texttt{cpplint} verifies whether the user follows C++ best practices and it detects syntax errors.
     \item \texttt{clang\_format} recommends how the C++ code should be formatted and it fails if the code is not formatted properly. 
     \item \texttt{lint\_cmake} verifies whether CMake files follow the best practices.
@@ -308,6 +308,6 @@ The following tests are used to perform code quality analysis:
 
 \subsection{\acl{ci}}
 Unit tests, code quality tests, and more are executed in the scope of \ac{ci}.
-It means that the source code is stored in Git repositories, and that series of tests are executed every time a new change is pushed.
+It means that the source code is stored in Git repositories, and that a series of tests are executed every time a new change is pushed.
 In particular, every time a new commit is pushed, a Docker container is created, a \ac{ros2} environment is configured, static code analysis is done, the packages are built, and unit tested.
 If any of these actions fail, the whole test is considered a failure, and a developer is forced to fix the error.

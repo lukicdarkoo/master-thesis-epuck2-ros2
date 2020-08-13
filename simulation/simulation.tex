@@ -327,7 +327,7 @@ The principal point also doesn't have offset, but it is in the center of the ima
 
 \subsection{\acsp{led}}
 There are eight \acsp{led} available in the robot and they are controlled with messages of type \texttt{std\_msgs/Int32}.
-The last three bytes of the value are used to set three \ac{rgb} components in case of \acsp{rgbled} and for the regular \acp{led} the value is used to set the intensity.
+The last three bytes of the value are used to set three \ac{rgb} components in case of \acs{rgb} \acsp{led} and for the regular \acp{led} the value is used to set the intensity.
 Arguably here, message type \texttt{std\_msgs/ColorRGBA} may be more suitable, but \texttt{std\_msgs/Int32} is chosen to be more consistent with Webots \ac{api}.
 
 \subsection{Final Interface}

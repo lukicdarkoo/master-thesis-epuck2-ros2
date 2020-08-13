@@ -14,7 +14,7 @@ This chapter analyzes whether the \ac{ros2} driver for the e-puck2 physical robo
 
 \section{Comparison of Physical and Simulated E-puck2}
 
-In this section we want to verify whether the \ac{ros2} interface is the for the physical and simulated e-puck2 robots.
+In this section, we want to verify whether the \ac{ros2} interface is the for the physical and simulated e-puck2 robots.
 In that respect, endpoints of the \ac{ros2} interface of the physical and the simulated e-puck2 robots will be individually compared.
 The difference of the \ac{ros2} interfaces will then be quantified with \ac{ros2} navigation and mapping controllers.
 
@@ -22,7 +22,7 @@ The difference of the \ac{ros2} interfaces will then be quantified with \ac{ros2
 
 % First, the readings from the sensors need to be compared. Most of the sensors of the e-puck2 simulated robot are calibrated before this project has taken place.
 % Therefore, a quick visual inspection was enough to verify that the sensors have the desired output.
-The \ac{ros2} interfaces for physical and simulated robots are very similar, image related topics being the only difference.
+The \ac{ros2} interfaces for physical and simulated robots are very similar, image-related topics being the only difference.
 The physical e-puck2 robot advertises \texttt{/image\_raw/compressed} topic of type \texttt{sensor\_msgs/CompressedImage} and the robot uses it to transfer compressed images over the network.
 
 \subsection{Camera Performance Comparison}
@@ -30,7 +30,7 @@ This benchmark has to compare different \ac{ros2} camera node implementations on
 The analysis aims to determine a suitable way to transport the images from Raspberry Pi Zero W and identify bottlenecks.
 
 In terms of compression, the images are transported as raw, \ac{jpeg} compressed and as a Theora compressed video stream\footnote{Description of the Theora technology is available at the official website - \url{https://www.theora.org/}}.
-In terms of color encoding \ac{rgb} and \acs{yuv} are tested.
+In terms of color encoding, \ac{rgb} and \acs{yuv} are tested.
 And in terms of nodes separation, the testing node was located on-board or on workstation while communicating to the Raspberry Pi Zero W over Wi-Fi.
 
 In the Table \ref{tab:results:camera_perf}, performances are measured in \ac{fps} and the measurements are given for different camera implementations.
@@ -89,8 +89,8 @@ Please note that the experiments have been done under the following conditions:
 \end{itemize}
 
 The measured data transfer between the Raspberry Pi Zero W and the \ac{pc} during the publishing of the raw images is 12.8Mb/s.
-Since every image is sent in \ac{rgb} format that means 7Mbits per image ($ 8 \times \frac{ 3 \times 640 \times 480 }{1024 \times 1024}$), or at 1.62 \ac{fps} it is 11.4Mbits/s.
-Therefore, by sending raw images, we expected to encounter limitations of the Wi-Fi network.
+Since every image is sent in \ac{rgb} format, that means 7Mbits per image ($ 8 \times \frac{ 3 \times 640 \times 480 }{1024 \times 1024}$), or at 1.62 \ac{fps}, it is 11.4Mbits/s.
+Therefore, by sending raw images, we expected to encounter the limitations of the Wi-Fi network.
 
 In all other methods that require compression (\ac{jpeg} or Theora), the \ac{cpu} on Raspberry Pi Zero W was hitting 100\% of workload.
 Therefore, in those cases, the \ac{cpu} is the bottleneck.
@@ -120,10 +120,10 @@ Since the network is not the bottleneck here, but \ac{cpu}, the effect of anothe
 To improve \ac{jpeg} compression performance and effectively increase the \ac{fps}, the compression is offloaded to \ac{gpu}.
 Comparison of \ac{jpeg} image compression performed on \ac{cpu} and \ac{gpu} is depicted in Figure \ref{fig:results:camera_load}.
 It shows that even though there is no compression involved, just image publishing, the images are too large for Raspberry Pi Zero W to be transmitted efficiently, and the process allocates a lot of \ac{cpu} time.
-In contrast, there the images compressed with \ac{gpu} are the small and cumbersome process of compression is offloaded to \ac{gpu}, leaving \ac{cpu} with a minimal load.
+In contrast, there the images compressed with \ac{gpu} are the small and cumbersome process of compression is offloaded to \ac{gpu}, leaving the \ac{cpu} with a minimal load.
 
 \subsection{Performance Comparison in Mapping}
-In Section \ref{sec:demos:mapping} a custom \ac{ros2} node for mapping is described. Here, it will be used by the e-puck2 physical and simulated robot for performance comparison. In that purpose, a physical map is created, as well as its digital copy in Webots (see Figure \ref{fig:results:map}).
+In Section \ref{sec:demos:mapping}, a custom \ac{ros2} node for mapping is described. Here, it will be used by the e-puck2 physical and simulated robot for performance comparison. In that purpose, a physical map is created, as well as its digital copy in Webots (see Figure \ref{fig:results:map}).
 
 \begin{figure}[H]
 \centering
@@ -162,7 +162,7 @@ However, to quantitatively compare if the quality of the maps we use \ac{iou}:
     \texttt{IoU} = \frac{\texttt{Area of Overlap}}{\texttt{Area of Union}}
 \end{equation}
 
-In which \texttt{Area of Overlap} is a number of pixels that represent a wall on both maps, while \texttt{Area of Union} is a number of pixels represent the wall in at least one of the maps.
+In which \texttt{Area of Overlap} is a number of pixels that represent a wall on both maps, while the \texttt{Area of Union} is a number of pixels represent the wall in at least one of the maps.
 
 The \ac{iou} gives us the results shown in Table \ref{tab:results:map_iou}.
 
@@ -211,9 +211,9 @@ The observed behavior is exactly what we wanted to achieve as it proves that the
 \label{results:subsec:phy_navigation}
 
 Similar to the mapping, a navigation utilizes a lot of sensors.
-However, for navigation \ac{ros2} Navigation2 package is used to verify if the \ac{ros2} drivers provide satisfying results with the community packages.
-The navigation is configured to use a particle filter to fix transformation between map and odometry frame (although the weight of particle filter is much smaller in comparison to odometry).
-Also, it uses the previously obtained map in the mapping experiment.
+However, for navigation \ac{ros2} \texttt{navigation2} package is used to verify if the \ac{ros2} drivers provide satisfying results with the community packages.
+The navigation is configured to use a particle filter to fix the transformation between map and odometry frame (although the weight of particle filter is much smaller in comparison to odometry).
+In addition, it uses the previously obtained map in the mapping experiment.
 
 \begin{figure}[H]
     \centering
@@ -229,7 +229,7 @@ Therefore, in the figure you can see that the paths chosen by the physical and s
 
 \section{\ac{ros2} Interface for E-puck2 vs Khepera IV}
 
-In this experiment the goal is to verify whether the same \ac{ros2} controller can be used with different robots.
+In this experiment, the goal is to verify whether the same \ac{ros2} controller can be used with different robots.
 As before, there are two tests.
 The first is with a custom mapping node and the second is with the \ac{ros2} community navigation packages.
 A map for this experiment had to be bigger to accommodate Khepera IV robot (see Figure \ref{fig:results:map_epuck_vs_khepera}).
@@ -278,12 +278,12 @@ Similarly to the previous navigation comparison the result is shown in Figure \r
 
 \section{Benefits of Generalized \ac{ros2} Interface for Webots}
 
-Generalized \ac{ros2} driver on e-puck2 robot has produces the exact same behavior as a specific \ac{ros2} driver given in Chapter \ref{chap:simulation}.
-Therefore, in this section a brief overview on using the generalized \ac{ros2} driver with other robots will be given.
+Generalized \ac{ros2} driver on e-puck2 robot has produces the same \ac{ros2} interface as a specific \ac{ros2} driver given in Chapter \ref{chap:simulation}.
+Therefore, in this section, a brief overview on using the generalized \ac{ros2} driver with other robots will be given.
 
 \subsection{Khepera IV Driver Analysis}
 
-In the first figure (Figure \ref{fig:results:khepera4_transforms}) results of URDF export is shown.
+In the first figure (Figure \ref{fig:results:khepera4_transforms}), a result of URDF export is shown.
 The figure shows a different coordinate frames exported with the new Webots \ac{api} function.
 
 \begin{figure}[H]
@@ -343,7 +343,7 @@ In further text, a two examples will be given, TIAGo++ and TurtleBot3 Burger.
 
 TIAGo++ robot is designed by PAL Robotics to work in indoor environments.
 Typically, the platform is used in research or light industry. 
-To us, the robot is interesting because it has a lot joints\footnote{A specific \ac{ros2} driver was already developed, but the universal driver presented in this thesis greatly extends its capabilities}.
+To us, the robot is interesting because it has a lot of joints\footnote{A specific \ac{ros2} driver was already developed, but the universal driver presented in this thesis greatly extends its capabilities}.
 Therefore, it is a good test for the \ac{urdf} exporter.
 
 \begin{figure}[H]

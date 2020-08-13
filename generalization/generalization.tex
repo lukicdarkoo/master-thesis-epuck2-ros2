@@ -18,21 +18,21 @@ The universal launch file allows users to bootstrap the project and benefit from
 
 % pros and cons
 This system is supposed to bring a few major advantages for the users, the most important of which is the reduction of development time.
-Instead of writing a custom Webots controller, which exposes the \ac{ros2} interface for each robot, the process of creating a \ac{ros2} interface can be completely avoided reducing development time significantly.
+Instead of writing a custom Webots controller, which exposes the \ac{ros2} interface for each robot, the process of creating a \ac{ros2} interface can be completely avoided, reducing the development time significantly.
 % Besides, if the controller written by the user is not implemented properly, every iteration on the model requires changes in the controller.
 % For example, if \texttt{lookupTable} field of \texttt{DistanceSensor} is changed in model, the controller should be updated accordingly.
 The second major advantage of the universal driver is that it is less prone to errors.
 Since the universal driver is supposed to be maintained by the Webots team and community, the bugs should be discovered and fixed quickly.
-However, the universal driver and launch introduce a level of abstraction hiding implementation details and customization possibilities.
+However, the universal driver and launch introduce a level of abstraction, hiding implementation details and customization possibilities.
 Therefore, the building blocks must be carefully designed to allow a high level of customization if needed.
 
 % challenges
 As mentioned, the universal driver needs access to the Webots robot model to generate a proper \ac{ros2} interface.
 This will present multiple challenges:
 if a Webots robot is not configured to work as Supervisor, many aspects of Webots robot model are hidden.
-Therefore, the Webots controller \ac{api} has to be extended, the most importantly, the \ac{api} needs to be extended to support allow \ac{ros2} transforms.
-The other missing functions in the Webots \ac{api} is, for example, access to a lookup table of \texttt{DistanceSensor}.
-The access to lookup table is needed because the \texttt{sensor\_msgs/Range} topic requires real values to be published instead of raw values.
+Therefore, the Webots controller \ac{api} has to be extended to provide relevant endpoints that can be utilized for publishing of \ac{ros2} transforms and resolving actual sensor readings.
+The other missing function in the Webots \ac{api} is, for example, access to a lookup table of \texttt{DistanceSensor}.
+The access to the lookup table is needed because the \texttt{sensor\_msgs/Range} topic requires real values to be published instead of raw values.
 
 
 
@@ -51,7 +51,7 @@ In this section, more details on the design will be given. Nevertheless, we need
 
 % As shown in the picture, the process of creating \ac{ros2} driver required of user to use Webots \ac{api} to write \ac{ros2} driver. 
 The user had to write a layer that sits in between low-level \ac{api} (Webots \ac{api} in this case) and \ac{ros2} interface. 
-Although this is a necessary step for the real robots and allows users a lot of customization (or even ability to optimize), the objective is to avoid the step for the reasons given in the previous section (see Section \ref{sec:generalization:introduction}).
+Although this is a necessary step for the real robots and allows users a lot of customization (or even the ability to optimize), the objective is to avoid the step for the reasons given in the previous section (see Section \ref{sec:generalization:introduction}).
 
 % Therefore, the new universal driver design is given in the following picture.
 \begin{figure}[H]
@@ -62,7 +62,7 @@ Although this is a necessary step for the real robots and allows users a lot of 
 \end{figure}
 
 With the universal driver, a notion of a device is introduced.
-A device\footnote{Note that ``device" is related to a module in the universal driver and "Webots device" is a node that represents a robot device in Webots.}, in this context, represent a module which transforms data from of one or more Webots devices to one or more \ac{ros2} topics and services.
+A device\footnote{Note that ``device" is related to a module in the universal driver and "Webots device" is a node that represents a robot device in Webots.}, in this context, represents a module which transforms data from one or more Webots devices to one or more \ac{ros2} topics and services.
 By default, the universal driver will go through all Webots devices available in a robot and try to match them with a suitable device.
 If the match is found, a new device is instantiated, a Webots device is assigned to it, and the device will start publishing or subscribing to the \ac{ros2} messages.
 
@@ -87,7 +87,7 @@ Keeping track of the transforms is important as it can provide a relative transl
 \ac{ros2} considers the transforms as a vital aspect of robotics applications.
 Therefore, many \ac{ros2} packages rely on the \ac{ros2} transformations.
 For example, the \texttt{slam\_toolbox} uses the transforms to find translation and rotation between \texttt{base\_link} and a link that publishes to a topic of type \texttt{LaserScan}.
-This is necessary as otherwise, the \texttt{slam\_toolbox} couldn't determine the robot's position in the map.
+This is necessary as otherwise, the \texttt{slam\_toolbox} could not determine the robot's position in the map.
 
 \begin{figure}[H]
     \centering
@@ -96,36 +96,38 @@ This is necessary as otherwise, the \texttt{slam\_toolbox} couldn't determine th
     \label{fig:generalization:tf2_robot}
 \end{figure}
 
-Considering the importance of transforms \ac{ros2}, the universal driver has to offer functionality to publish those transforms automatically.
+Considering the importance of transforms in \ac{ros2}, the universal driver has to offer functionality to publish those transforms automatically.
 To publish transforms automatically, three approaches are considered, two of which are implemented in this project's scope:
 \begin{itemize}
     \item Method \#1. The absolute position of each solid node is sampled periodically and published as a dynamic transform. The whole method can be implemented in the universal driver.
     \item Method \#2. A new \ac{api} function is added to Webots, which retrieves a tree of important links and joints. The tree is parsed in the universal driver, and relative transforms are published based on corresponding encoder readings (\texttt{PositionSensor} node in Webots). 
-    \item Method \#3. A new \ac{api} function is added to Webots which retrieves \ac{urdf} as a string. \ac{urdf} string is then passed to \texttt{robot\_state\_publisher} as \ac{ros2} parameter. Also, from the universal driver, encoder readings are published periodically as messages of type \texttt{sensor\_msgs/JointState}. These messages are consumed by \texttt{robot\_state\_publisher}, and corresponding transforms are published.
+    \item Method \#3. A new \ac{api} function is added to Webots which retrieves \ac{urdf} as a string. \ac{urdf} string is then passed to \texttt{robot\_state\_publisher} as \ac{ros2} parameter. Furthermore, from the universal driver, encoder readings are published periodically as messages of type \texttt{sensor\_msgs/JointState}. These messages are consumed by \texttt{robot\_state\_publisher}, and corresponding transforms are published.
 \end{itemize}
 
 The following table compares the most important aspects of these methods.
 
 \begin{table}[H]
+    \begin{adjustwidth}{-1.5in}{-1.5in}
     \centering
     \begin{tabular}{|l|c|c|c|}
         \hline
-        & Method \#1 & Method \#2 & Method \#3  \\
+        & \textbf{Method \#1} & \textbf{Method \#2} & \textbf{Method \#3}  \\
         \hline
-        Preserves noise & No & Yes & Yes \\
+        \textbf{Preserves noise} & No & Yes & Yes \\
         \hline
-        Supervisor mode is necessary & Yes & No & No \\
+        \textbf{Supervisor mode is necessary} & Yes & No & No \\
         \hline
-        Recognizes static transforms & No & Yes & Yes \\
+        \textbf{Recognizes static transforms} & No & Yes & Yes \\
         \hline
-        Implemented in the project scope & No & Yes & Yes \\
+        \textbf{Implemented in the project scope} & No & Yes & Yes \\
         \hline
     \end{tabular}
     \caption{Comparison of different methods considered for publishing \ac{ros2} transforms}
     \label{tab:generalization:transforms_comparison}
+    \end{adjustwidth}
 \end{table}
 
-As shown in Table \ref{tab:generalization:transforms_comparison}, there are two significant reasons why Method \#1 is not used: it does not preserve noise that is coming from the encoders, and the robot has work in supervisor mode.
+As shown in Table \ref{tab:generalization:transforms_comparison}, there are two significant reasons why Method \#1 is not used: it does not preserve noise that is coming from the encoders, and the robot has to work in supervisor mode.
 Even though the implementation does not require changes to Webots core, a considerable disadvantage is a fact that it does not preserve a realistic behavior of the robot supported in Webots.
 
 \subsection{Transforms from \acs{urdf}}
@@ -133,12 +135,12 @@ This section describes Method \#3, which is based on exporting an \ac{urdf} docu
 
 \subsubsection{\acs{urdf} vs. Webots' Robot Model Representation}
 However, it is important to compare \ac{urdf} format and Webots' robot model representation first.
-\ac{urdf} is \ac{xml} format and it uses only two primitives to describe robot model, links and joints.
-The \acs{urdf} document has to contain at least one link, usually named as \texttt{base\_link}, and it's children can be only joints \cite{noauthor_urdf_nodate} (see Figure \ref{fig:generalization:urdf_vs_webots:urdf}).
+\ac{urdf} is an \ac{xml} format and it uses only two primitives to describe robot model, links and joints.
+The \acs{urdf} document has to contain at least one link, usually named as \texttt{base\_link}, and its children can be only joints \cite{noauthor_urdf_nodate} (see Figure \ref{fig:generalization:urdf_vs_webots:urdf}).
 Therefore, a link cannot be encapsulated inside another link. Thus, a link can be connected to the other link with a common joint only.
 This is a main difference to Webots' robot representation as the root node in Webots encapsulates other nodes.
 In addition to it, Webots has richer specter of nodes.
-Besides the links (\texttt{Solid} node in Webots) and joints there are also nodes like \texttt{Group}, \texttt{Transform}, \texttt{Geometry} and \texttt{Shape} (see Figure \ref{fig:generalization:urdf_vs_webots:urdf}).
+Besides the links (\texttt{Solid} node in Webots) and joints there are also nodes like \texttt{Group}, \texttt{Transform}, \texttt{Geometry}, and \texttt{Shape} (see Figure \ref{fig:generalization:urdf_vs_webots:urdf}).
 
 \begin{figure}[H]
 \centering
@@ -158,7 +160,7 @@ Besides the links (\texttt{Solid} node in Webots) and joints there are also node
 \label{fig:generalization:urdf_vs_webots}
 \end{figure}
 
-The described two main differences in a robot model representation, hierarchy and node diversity, make \ac{urdf} export feature implementation rather complicated. 
+The described two main differences in a robot model, representation, hierarchy, and node diversity, make \ac{urdf} export feature implementation rather complicated. 
 
 \subsubsection{\ac{urdf} Export}
 \label{subsub:generalization:urdf_export}
@@ -245,7 +247,7 @@ Although, the \ac{urdf} document is accurate, it contains unnecessary links (see
   \caption{Webots' model representation}
   \label{fig:generalization:squashing_transforms:desired}
 \end{subfigure}
-\caption{Typical robot representation in \ac{urdf} and in Webots}
+\caption{Typical \ac{urdf} and Webots robot representation}
 \label{fig:generalization:squashing_transforms}
 \end{figure}
 
@@ -256,11 +258,11 @@ It means that only relevant Webots nodes are exported into \ac{urdf} (as link no
 The relevant nodes are all nodes that have a \texttt{name} field defined.
 The field \texttt{name} is always present for devices, and users can explicitly define \texttt{name} fields if it should be exported as a \ac{urdf} link.
 
-As multiple intermediate Webots nodes can be neglected, the translation of child node ($I_0$) in respect to it's parent node ($I_N$) is defined as:
+As multiple intermediate Webots nodes can be neglected, the translation of child node ($I_0$) in respect to its parent node ($I_N$) is defined as:
 \begin{equation}
     \bm{T}_{I_0}^{I_N} = \bm{T}_{I_0} + \sum_{i=1}^{N-1} \bm{R}_{I_{i-1}}^{I_i} \bm{T}_{I_i}^{I_{i+1}}
 \end{equation}
-whereas the translation of the intermediate node ($I_m$) in respect to it's parent ($I_n$) is represented by $ \bm{T}_{I_m}^{I_n} $ and consists of a three-dimensional vector.
+whereas the translation of the intermediate node ($I_m$) in respect to its parent ($I_n$) is represented by $ \bm{T}_{I_m}^{I_n} $ and consists of a three-dimensional vector.
 
 In order to determine a rotation between two relevant links we use:
 \begin{equation}
@@ -272,17 +274,17 @@ Once the relevant node is reached, it calculates the translation from the first 
 
 The rotation matrix has to be converted to Euler angles around a fixed axis (extrinsic) roll-pitch-yaw to match \ac{urdf}'s specification. This is done according to \cite[p. 9]{eberly_euler_nodate}.
 
-Finally, the inter-process communication (from Webots simulation to Webots \ac{api}) is extended to support a new function:
+Finally, the interprocess communication (from Webots simulation to Webots \ac{api}) is extended to support a new function:
 
 \begin{minted}{c}
 const char *wb_robot_get_urdf(const char *prefix);
 \end{minted}
 
-The \ac{api} function is exposed to C++, Python, MATLAB, Java and \ac{ros} client libraries.
+The \ac{api} function is exposed to C++, Python, MATLAB, Java, and \ac{ros} client libraries.
 
 \subsubsection{Utilization of robot\_state\_publisher}
 
-Once the Webots' \ac{api} is capable of exporting \ac{urdf} as a string it can be utilized in the \ac{ros2} driver to publish \ac{ros2} transforms.
+Once the Webots' \ac{api} is capable of exporting \ac{urdf} as a string, it can be utilized in the \ac{ros2} driver to publish \ac{ros2} transforms.
 The approach to publish the transform is given in Figure \ref{fig:generalization:transforms_method_3}.
 
 \begin{figure}[H]
@@ -305,7 +307,7 @@ In this section, a brief explanation will be given for a few Webots devices.
 \subsection{Differential Drive}
 The differential drive module interacts with two motors and two position sensors.
 The implementation is the same as explained in Section \ref{sec:simulation:odometry_velocity}, but it is decoupled from the rest of the driver to work as an independent component.
-Also, it provides a high level of configurability (see table bellow, Table \ref{tab:generalization:diff_driver_params}).
+Additionally, it provides a high level of configurability (see table below, Table \ref{tab:generalization:diff_driver_params}).
 
 \begin{table}[H]
     \centering
@@ -339,20 +341,20 @@ Also, it provides a high level of configurability (see table bellow, Table \ref{
 \end{table}
 
 \subsection{Range}
-Webots returns value from distance sensors according to specified lookup table\footnote{In the example of lookup table first column represents the actual measurement, the second is the raw measurement, and the third column is the noise.}. 
+Webots returns values from distance sensors according to specified lookup table\footnote{In the example of lookup table first column represents the actual measurement, the second is the raw measurement, and the third column is the noise.}. 
 
 \begin{minted}{python}
 lookupTable [ 0     1000  0,
               0.1   200   0.1 ]
 \end{minted}
 
-It means it will not necessarily return a real distance to the closest object, but what Webots consider a raw value - linearly interpolated value.
+It means it will not necessarily return a real distance to the closest object, but what Webots considers a raw value (linearly interpolated value based on the lookup table).
 Therefore, to obtain the actual distance, the lookup table has to be read.
 The values are then interpolated according to the table.
 
-However, Webots \ac{api} doesn't provide function to retrieve lookup table.
+However, Webots \ac{api} does not provide function to retrieve lookup table.
 Therefore, the function is implemented\footnote{The \ac{api} function to obtained lookup table is also added for \texttt{Accelerometer}, \texttt{Compass}, \texttt{Gyro}, \texttt{InertialUnit}, \texttt{LightSensor} and \texttt{TouchSensor}.
-All \ac{api} functions are also added to C, C++, Python, MATLAB, Java and \ac{ros}.} similarly to one explained in Section \ref{subsub:generalization:urdf_export}.
+All \ac{api} functions are also added to C, C++, Python, MATLAB, Java and \ac{ros}.} similarly to the one explained in Section \ref{subsub:generalization:urdf_export}.
 
 Then, in the universal controller, the actual values are returned, as shown by Algorithm \ref{fig:generalization:interopolation}.
 

@@ -3,12 +3,12 @@
 \shorttitle{\nameref{chap:background}}
 
 This chapter has two purposes.
-First, to give a reader a theoretical background about concepts and technologies needed for understanding the project.
+First, to give a reader a theoretical background about the concepts and technologies needed for understanding the project.
 Second, it shows the related work - how this project is different and what improvements it brings in comparison to the existing solutions.
 
 \section{\ac{ros}}
 
-The initial founders of \ac{ros} define it as an open-source operating system, that, instead of process management and scheduling, provides a communication layer on top of the host operating systems of a heterogeneous compute cluster \cite{quigley_ros_nodate}.
+The initial founders of \ac{ros} define it as an open-source operating system which, instead of process management and scheduling, provides a communication layer on top of the host operating systems of a heterogeneous compute cluster \cite{quigley_ros_nodate}.
 
 \begin{figure}[H]
     \centering
@@ -18,7 +18,7 @@ The initial founders of \ac{ros} define it as an open-source operating system, t
 \end{figure}
 
 One also can say that \ac{ros} is a collection of tools, libraries, and conventions that simplify developing a complex robot behavior.
-In one interview, Roger Barga, leader of an Amazon's Web Service (AWS RoboMaker), emphasized the importance of \ac{ros} in robotics by saying \textit{``We think that ROS is becoming the Linux for the robots of the future''}\footnote{Roger Barga is an interview by Ricardo Tellez (from The Construct) in ROS Developers podcast -    \url{https://www.theconstructsim.com/aws-robomaker-with-roger-barga/}.}.
+In one interview, Roger Barga, leader of Amazon's Web Service (AWS RoboMaker), emphasized the importance of \ac{ros} in robotics by saying \textit{``We think that ROS is becoming the Linux for the robots of the future''}\footnote{Roger Barga is an interview by Ricardo Tellez (from The Construct) in ROS Developers podcast -    \url{https://www.theconstructsim.com/aws-robomaker-with-roger-barga/}.}.
 Defining \ac{ros} in one sentence is hard, but in further text, two crucial concepts of \ac{ros} will be covered.
 
 The first is the concept of a node.
@@ -28,28 +28,28 @@ In that way, the nodes are combined into a graph that can perform more complex t
 There are a few important characteristics of each node:
 \begin{itemize}
     \item The node can be implemented in various programming languages, without affecting the other nodes.
-    Being programming language agnostic allows developers to optimize the nodes for different behaviors.
+    Being a programming language agnostic allows developers to optimize the nodes for different behaviors.
     For example, if the node has to be efficient or interact closely with the hardware, C programming language may be more suitable.
     Otherwise, if fast prototyping is important,  Python may be a better fit.
     As a result, community nodes are implemented in a programming language that fits best the node's purpose.
     \item The nodes can be run on different computers.
     Each \ac{ros} node includes a mechanism to communicate locally or over the network with the other nodes.
-    A complex robotics system often includes multiple powerful computers and dozens of \acp{mcu} or \acp{fpga} specialized for various tasks, and therefore, this ability of \ac{ros} nodes is significant.
+    A complex robotics system often includes multiple powerful computers and dozens of \acp{mcu} or \acp{fpga} specialized for various tasks, and therefore, this capability of \ac{ros} nodes is significant.
     In this project, for example:
     \begin{itemize}
         \item \ac{mcu} is used to execute real-time tasks, like motor control,
-        \item on-board computer is used heavy tasks, like perception,
-        \item while workstation (\acs{pc}) is used for data visualization, monitoring and debugging.
+        \item on-board computer is used for heavy tasks, like perception,
+        \item while workstation (\acs{pc}) is used for data visualization, monitoring, and debugging.
     \end{itemize}
     \item The nodes can run on virtually any \ac{os}.
     Since \ac{ros2}, Linux, Mac, and Windows are officially supported.
     A stripped version of \ac{ros2}, micro-ROS, runs even on NuttX, FreeRTOS, and Zephyr, and the community has been porting to other \acp{os} as well.
     \item Since \ac{ros2}, the nodes are fully distributed. 
     It means that there is no single message broker to orchestrate the communication.
-    Being distributed significantly increases robustness as there is no single point of failure if a node crashes the rest of the system will continue to function.
+    Being distributed significantly increases robustness as there is no single point of failure; if a node crashes the rest of the system will continue to function.
 \end{itemize}
 
-In Fig. \ref{fig:background:ros_nodes} a graph of \ac{ros} nodes is given representing the node concepts given before.
+In Figure \ref{fig:background:ros_nodes}, a graph of \ac{ros} nodes is given, representing the node concepts given before.
 
 \begin{figure}[H]
     \centering
@@ -68,15 +68,15 @@ Mostly, communication between nodes is done through topics, but there other type
     \begin{itemize}
         \item history, keep last (keep only the last N messages) or keep all,
         \item reliability, best effort (may lose messages if the network is not stable) or reliable (guarantees message delivery) and
-        \item durability, transient local (nodes that got subscribed to a topic will receive the last message even though the message is published long time before) or volatile (messages will not be preserved for late-joiners).
+        \item durability, transient local (nodes that got subscribed to a topic will receive the last message even though the message is published a long time before) or volatile (messages will not be preserved for late joiners).
     \end{itemize}
     \item Services are used to get a response from the other nodes.
     The concept is very similar to functions with return values.
-    A client node sends a service request with data to a node that provides service, and after the result is ready the client node gets the response.
+    A client node sends a service request with data to a node that provides service, and after the result is ready, the client node gets the response.
     A typical request can be, \textit{``Is the motor turned on?''} or \textit{``Retrieve the full map now''}.
     \item Parameters allow nodes to be configured by the user or other nodes, on startup or during run-time.
     The underlying implementation is based on the previously explained services.
-    I means the nodes can be configured over the network.
+    It means the nodes can be configured over the network.
     \item Actions are available in \ac{ros} core since \ac{ros2}, and they are similar to the services.
     A difference is that the actions are optimized for requests that generally take longer to execute and need continuous feedback. A typical action can be, \textit{``Move the robot to the new position and while doing it, keep sending me a position''}.
 \end{itemize}
@@ -91,21 +91,21 @@ Depending on the area of robotics, new concepts may also emerge, but those two a
 
 
 \subsection{\ac{ros} Messages}
-One of the sub-objectives of this master project is to provide \ac{ros2} interface that is as compatible as possible with the existing packages.
+One of the subobjectives of this master project is to provide \ac{ros2} interface that is as compatible as possible with the existing packages.
 That will allow users to simply integrate existing \ac{ros2} packages and significantly increase their productivity.
 To achieve the objective, \ac{ros2} defines a vast list of existing message, service, and action types.
 In the scope of the project, only message types will be further described.
 
-Except for the standard types, available in most programming languages, such as bool, integer, float and string, some messages are more specific to the robotics such as odometry (for describing odometry data), twist (for defining angular and linear velocity), and range (for data from distance sensors).
+Except for the standard types available in most programming languages, such as bool, integer, float, and string, some messages are more specific to the robotics such as odometry (for describing odometry data), twist (for defining angular and linear velocity), and range (for data from distance sensors).
 These messages are exchanged through the previously described topics.
 Therefore, integrating a community \ac{ros2} package is a matter of launching (and sometimes configuring it), the package should automatically start publishing and subscribing to the messages as common message types are used.
 
 There are a few groups of message types, some of which are:
 \begin{itemize}
-    \item \texttt{std\_msgs} is a wrapper around primitive types such as \texttt{Bool}, \texttt{Int32}, \texttt{Float64}, \texttt{String} and \texttt{Float64MultiArray}.
+    \item \texttt{std\_msgs} is a wrapper around primitive types such as \texttt{Bool}, \texttt{Int32}, \texttt{Float64}, \texttt{String}, and \texttt{Float64MultiArray}.
     These message types are usually used to compose more complex message types and in general should be avoidable if there is more suitable type from the other groups.
     \item \texttt{geometry\_msgs} contains geometry primitives.
-    For example \texttt{Twist} is used to describe linear and angular velocity (usually used to control robot's velocity), rotations are described with \texttt{Quaternion} message types, robot's pose \texttt{Pose} (e.g. the navigation stack uses this message type describe the robot's goal position and orientation) and \texttt{Transform} to describe relative orientation and translation of two frames.
+    For example, \texttt{Twist} is used to describe linear and angular velocity (usually used to control robot's velocity), rotations are described with \texttt{Quaternion} message types, robot's pose \texttt{Pose} (e.g. the navigation stack uses this message type to describe the robot's goal position and orientation) and \texttt{Transform} to describe relative orientation and translation of two frames.
     \item \texttt{nav\_msgs} group contains message types used to interact with the navigation stack and the related packages.
     It defines message types such as \texttt{OccupancyGrid} that represent a map and \texttt{Odometry} that contains odometry data. 
     \item \texttt{sensor\_msgs} contains message types that are commonly used to describe data from sensor such as distance sensors (\texttt{Range}), \acsp{lidar} (\texttt{LaserScan}), cameras (\texttt{CameraInfo} and \texttt{Image}), light sensors (\texttt{Illuminance}) and similar. 
@@ -115,12 +115,12 @@ There are many more message group types, but those are the most relevant ones fo
 
 \subsection{\ac{ros} Distributions}
 
-\ac{ros} distributions is another vital aspect of the project.
+\ac{ros} distributions are another vital aspect of the project.
 The newest \ac{ros} distribution (as of the time of writing the thesis) is deliberately chosen.
-The choice is will be described later, but first, \ac{ros} versioning has to be described.
+The choice will be described later, but first, \ac{ros} versioning has to be described.
 
 \ac{ros} team releases a new \ac{ros} distribution every six months, following Ubuntu's release cycle.
-Every two years a new \ac{ros} \ac{lts} is released,
+Every two years, a new \ac{ros} \ac{lts} is released,
 a few weeks after Ubuntu's \ac{lts} release, as \ac{ros} relies on the latest Ubuntu \ac{lts}.
 
 In December 2017, \ac{ros2} is introduced, and since then \ac{ros} team has been publishing \ac{ros} and \ac{ros} releases every six months.
@@ -133,11 +133,11 @@ In December 2017, \ac{ros2} is introduced, and since then \ac{ros} team has been
     \label{fig:background:ros_distributions}
 \end{figure}
 
-In Fig. \ref{fig:background:ros_distributions} a few latest \ac{ros} distributions are shown.
+In Figure \ref{fig:background:ros_distributions}, a few latest \ac{ros} distributions are shown.
 Note that they all rely on Ubuntu \ac{lts} distributions and that \ac{ros2} Foxy Fitzroy is the first \ac{ros2} distribution with three years of support.
 
 In this project, the importance of \ac{ros2} is recognized, and therefore it is chosen instead of \ac{ros1}.
-Also, the master project had started before \ac{ros2} Foxy Fitzroy was released, and therefore the initial code is written for \ac{ros2} Eloquent Elusor with a plan to adopt \ac{ros2} Foxy Fitzroy.
+Furthermore, the master project had started before \ac{ros2} Foxy Fitzroy was released, and therefore the initial code is written for \ac{ros2} Eloquent Elusor with a plan to adopt \ac{ros2} Foxy Fitzroy.
 Finally, the master project is compatible with \ac{ros2} Eloquent Elusor and \ac{ros2} Foxy Fitzroy.
 
 \section{Robotics Platforms}
@@ -158,28 +158,28 @@ The robot is open hardware, and the software is open-source.
     \label{fig:background:e-puck2}
 \end{figure}
 
-The robot is shown in Fig. \ref{fig:background:e-puck2} and its main specifications are given in Table. \ref{tab:background:specifications}.
+The robot is shown in Figure \ref{fig:background:e-puck2} and its main specifications are given in Table. \ref{tab:background:specifications}.
 
 \begin{table}[H]
     \begin{adjustwidth}{-1.5in}{-1.5in}
     \centering
     \begin{tabular}{|l|l|}
         \hline
-        Size, weight & 70mm diameter, 130g \\
+        \textbf{Size, weight} & 70mm diameter, 130g \\
         \hline
-        \ac{mcu} & 32-bit STM32F407 @ 168 MHz (210 \acs{mips}), \acs{dsp} and \acs{fpu}, \acs{dma} \\
+        \textbf{\ac{mcu}} & 32-bit STM32F407 @ 168 MHz (210 \acs{mips}), \acs{dsp} and \acs{fpu}, \acs{dma} \\
         \hline
-        Motors & 2 stepper motors, 50:1 reduction gear and 20 steps per revolution \\
+        \textbf{Motors} & 2 stepper motors, 50:1 reduction gear and 20 steps per revolution \\
         \hline
-        Max velocity & 0.154m/s \\
+        \textbf{Max velocity} & 0.154m/s \\
         \hline
-        Distance sensor & 8 infra-red sensors (up to 0.06m) and one \acs{tof} (up to 2m) \\
+        \textbf{Distance sensor} & 8 infra-red sensors (up to 0.06m) and one \acs{tof} (up to 2m) \\
         \hline
-        Camera & 640x480 at 15\acs{fps} \\
+        \textbf{Camera} & 640x480 at 15\acs{fps} \\
         \hline
-        \acs{imu} & 3D accelerometer, 3D gyro, 3D magnetometer \\
+        \textbf{\acs{imu}} & 3D accelerometer, 3D gyro, 3D magnetometer \\
         \hline
-        \acsp{led} & 4 red \acsp{led} and 4 \acs{rgb} \acsp{led} \\
+        \textbf{\acsp{led}} & 4 red \acsp{led} and 4 \acs{rgb} \acsp{led} \\
         \hline
     \end{tabular}
     \end{adjustwidth}
@@ -189,9 +189,9 @@ The robot is shown in Fig. \ref{fig:background:e-puck2} and its main specificati
 
 \subsubsection{Pi-puck}
 
-E-puck2 robot allows extensions to be added providing different features such as additional autonomy, ground sensors or additional processing power.
+E-puck2 robot allows extensions to be added providing different features such as additional autonomy, ground sensors, or additional processing power.
 The pi-puck extension, for example, consists of a Raspberry Pi Zero W and adapter \ac{pcb}, and interacts directly with on-board \ac{mcu} and sensors \cite{millard_pi-puck_2017}.
-Since Raspberry Pi Zero W is Linux base board it can run \ac{ros} with full \ac{dds} implementation.
+Since Raspberry Pi Zero W is Linux base board, it can run \ac{ros} with full \ac{dds} implementation.
 
 \begin{figure}[H]
     \centering
@@ -214,27 +214,27 @@ The robot is designed by K-Team\footnote{Official website of K-Team is available
     \label{fig:background:khepera_iv}
 \end{figure}
 
-The robot is shown in Fig. \ref{fig:background:khepera_iv} and its main specifications are given in Table. \ref{tab:background:khepera_iv}.
+The robot is shown in Figure \ref{fig:background:khepera_iv} and its main specifications are given in Table. \ref{tab:background:khepera_iv}.
 
 \begin{table}[H]
     \centering
     \begin{tabular}{|l|l|}
         \hline
-        Size, weight & 140mm diameter, 540g \\
+        \textbf{Size, weight} & 140mm diameter, 540g \\
         \hline
-        Processor & 800MHz ARM Cortex-A8 Processor and \acs{mcu} \\
+        \textbf{Processor} & 800MHz ARM Cortex-A8 Processor and \acs{mcu} \\
         \hline
-        Motors & 2 DC brushed motors with incremental encoders \\
+        \textbf{Motors} & 2 DC brushed motors with incremental encoders \\
         \hline
-        Max velocity & 0.8m/s \\
+        \textbf{Max velocity} & 0.8m/s \\
         \hline
-        Distance sensor & 8 infra-red (up to 0.25m) and 5 ultrasonic (up to 2m) \\
+        \textbf{Distance sensor} & 8 infra-red (up to 0.25m) and 5 ultrasonic (up to 2m) \\
         \hline
-        Camera & 752x480 at 30\acs{fps} \\
+        \textbf{Camera} & 752x480 at 30\acs{fps} \\
         \hline
-        \acs{imu} & 3D accelerometer, 3D gyro \\
+        \textbf{\acs{imu}} & 3D accelerometer, 3D gyro \\
         \hline
-        \acsp{led} & 3 \acs{rgb} \acsp{led} \\
+        \textbf{\acsp{led}} & 3 \acs{rgb} \acsp{led} \\
         \hline
     \end{tabular}
     \caption{Relevant specifications of Khepera IV robot}
@@ -243,7 +243,7 @@ The robot is shown in Fig. \ref{fig:background:khepera_iv} and its main specific
 
 \section{Webots}
 Webots is an open-source robot simulator developed by Cyberbotics\footnote{Official website of Cyberbotics is available at \url{https://cyberbotics.com/}.}, initially designed at \ac{epfl}.
-The simulator provides a development environment to model, program and simulate robots \cite{michel_cyberbotics_2004, michel_webots_1998, michel_cyberbotics_2014}.
+The simulator provides a development environment to model, program, and simulate robots \cite{michel_cyberbotics_2004, michel_webots_1998, michel_cyberbotics_2014}.
 
 \begin{figure}[H]
     \centering
@@ -256,21 +256,21 @@ The main Webots features are:
 \begin{itemize}
     \item Robot/world editor: The models are stored in VRML97 format, allowing users to either change the document manually or through the Webots user interface. 
     The Webots world editor allows the users to see changes in the world immediately.
-    It is possible to include pre-built models, and the users can choose among a huge library of models.
+    It is possible to include pre-built models, and the users can choose among a substantial library of models.
     \item Realistic simulation: The simulations produced in Webots are realistic compared to the similar products. 
     The physics simulation is based on a modified version of \ac{ode}.
     The models shipped with the Webots are visually very detailed, although still optimized for high performance.
-    \item Programming interface: \ac{api} for programming robots is officially available in the most popular programming languages, C, C++, Python, MATLAB and Java, while community-contributed packages further extend this list\footnote{An example of \ac{api} in Haskell programming language, created by the community, is available at \url{https://github.com/cyberbotics/HsWebots}.}.
+    \item Programming interface: An \ac{api} for programming robots is officially available in the most popular programming languages, C, C++, Python, MATLAB, and Java, while community-contributed packages further extend this list\footnote{An example of \ac{api} in Haskell programming language, created by the community, is available at \url{https://github.com/cyberbotics/HsWebots}.}.
     The \ac{api} allows simple access to the sensors and actuators available in the robots.
-    \item Deterministic simulations: Webots guarantees a simulation to output the same behavior every time it runs (user can also choose non-deterministic simulation).
+    \item Deterministic simulations: Webots guarantees a simulation to output the same behavior every time it runs (the user can also choose non-deterministic simulation).
     Although a non-deterministic simulation is preferable before transferring to a real robot, deterministic simulation is beneficial when doing initial algorithm tests.
-    Also, this feature can be exploited to simplify automated testing in \ac{ci}.
+    Additionally, this feature can be exploited to simplify automated testing in \ac{ci}.
 \end{itemize}
 
 Those are the main points that justify the usage of Webots over similar products.
 
 \section{Related Work}
-Existing \ac{ros} support for the e-puck2 physical robot and Webots will be analyzed.
+The existing \ac{ros} support for the e-puck2 physical robot and Webots will be analyzed.
 Drawbacks in current implementations of \ac{ros} support are the motivation for this project; therefore, they will be explained in this section.
 
 \subsection{\ac{ros} Support for E-puck2}
@@ -285,21 +285,21 @@ In that case, \ac{ros} driver runs on a workstation while communicating with the
          \hline
          & \textbf{GCtronic's \#1} & \textbf{GCtronic's \#2} & \textbf{Proposed solution} \\
          \hline
-         \rowcolor{lightgray} \textbf{\ac{ros2} support} & No & No & Yes \\
+         \rowcolor{llgray} \textbf{\ac{ros2} support} & No & No & Yes \\
          \hline
-         \rowcolor{lightgray} \textbf{Communication} & Bluetooth & \acs{udpros}/\acs{tcpros} & \ac{dds} \\
+         \rowcolor{llgray} \textbf{Communication} & Bluetooth & \acs{udpros}/\acs{tcpros} & \ac{dds} \\
          \hline
-         \rowcolor{lightgray} \textbf{Camera} & 160x120@4 & No & 640x480@10 \\
+         \rowcolor{llgray} \textbf{Camera} & 160x120@4 & No & 640x480@10 \\
          \hline
          \textbf{Battery autonomy} & Long & Short & Short \\
          \hline
-         \rowcolor{lightgray} \textbf{Unit tests} & No & No & Yes, with \ac{ci} \\
+         \rowcolor{llgray} \textbf{Unit tests} & No & No & Yes, with \ac{ci} \\
          \hline
-         \rowcolor{lightgray} \textbf{Code quality tests} & No & No & Yes, with \ac{ci} \\
+         \rowcolor{llgray} \textbf{Code quality tests} & No & No & Yes, with \ac{ci} \\
          \hline
-         \rowcolor{lightgray} \textbf{Cross-compilation} & No & No & Yes, tools are given  \\
+         \rowcolor{llgray} \textbf{Cross-compilation} & No & No & Yes, tools are given  \\
          \hline
-         \rowcolor{lightgray} \textbf{Independent from \acs{pc}} & No & Yes & Yes  \\
+         \rowcolor{llgray} \textbf{Independent from \acs{pc}} & No & Yes & Yes  \\
          \hline
     \end{tabular}
     \end{adjustwidth}
@@ -307,7 +307,7 @@ In that case, \ac{ros} driver runs on a workstation while communicating with the
     \label{tab:background:epuck_ros}
 \end{table}
 
-As showed in Table \ref{tab:background:epuck_ros} the proposed solution offers better implementation in many aspects.
+As showed in Table \ref{tab:background:epuck_ros}, the proposed solution offers better implementation in many aspects.
 The proposed solution's main drawback is the battery autonomy as the pi-puck extension requires a significant amount of power (around 0.7 watts, it can vary depending on usage).
 
 
@@ -317,7 +317,7 @@ Webots supports both, \ac{ros1} and \ac{ros2}, but with certain limitations.
 
 Webots \ac{ros1} implementation automatically exposes all Webots \ac{api} functions as \ac{ros} topics and services.
 Automatically exposing \ac{ros} \ac{api} sounds as a reasonable solution, but it is uncanny for the \ac{ros} ecosystem, and therefore, much effort is required from users to adapt the exposed \ac{api} to fit other \ac{ros} packages.
-For example, if one wants to publish odometry data, the one needs to create a \ac{ros} node that subscribes topics published by encoders and then publishes the corresponding odometry and transform messages. This work is time consuming, complex, and consumes unnecessary processing power by republishing all the messages.
+For example, if one wants to publish odometry data, one needs to create a \ac{ros} node that subscribes to topics published by encoders and then publishes the corresponding odometry and transform messages. This work is time consuming, complex, and consumes unnecessary processing power by republishing all the messages.
 
 Therefore, Cyberbotics has taken another approach in \ac{ros2} support.
 Instead of creating \ac{ros2} topics and services as done for \ac{ros1} it provides facilities to users to design and implement their own \ac{ros2} interface using Webots \ac{api} functions.

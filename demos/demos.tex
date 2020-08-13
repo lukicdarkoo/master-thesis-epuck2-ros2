@@ -8,35 +8,35 @@ All demos presented in this chapter work with both the physical and simulated e-
 Some demos are also successfully tested with a few other simulated robots.
 
 \section{Visualizations}
-\acs{rviz2} acts as a \ac{ros2} node, and it allows users to visualize the robot's state and perception of the environment in 3D.
+RViz2 acts as a \ac{ros2} node, and it allows users to visualize the robot's state and perception of the environment in 3D.
 This tool is officially supported and developed by the \ac{ros2} team; it is commonly used in \ac{ros2} applications for visualizations and is extensively utilized throughout this project. 
-Therefore, a few use-cases will be given here.
+Therefore, a few use cases will be given here.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{demos/figures/rviz.pdf}
-    \caption{Typical visualization of e-puck2 in \acs{rviz2}}
+    \caption{Typical visualization of e-puck2 in RViz2}
     \label{fig:demos:rviz}
 \end{figure}
 
-\ac{rviz2} is very customizable, meaning it can visualize different aspects of the robot depending on the user's needs.
-Once the user is satisfied with the visualization, the view can be saved to a file, for later reuse.
-In this master project, there are many \ac{rviz2} configurations provided, optimized for different scenarios like sensor inspection, mapping, and navigation.
+RViz2 is very customizable, meaning it can visualize different aspects of the robot depending on the user's needs.
+Once the user is satisfied with the visualization, the view can be saved to a file for later reuse.
+In this master project, there are many RViz2 configurations provided, optimized for different scenarios like sensor inspection, mapping, and navigation.
 These configurations will be automatically loaded, depending on the launch file that is used.
 
-In Figure \ref{fig:demos:rviz} a default view of \acs{rviz2} for the e-puck2 robot is shown.
-It visualizes the robot's pose obtained from the odometry, history of odometry readings, different coordinate systems (like odometry, robot's base, distance sensors and similar), range, and laser scan measurements.
+In Figure \ref{fig:demos:rviz} a default view of RViz2 for the e-puck2 robot is shown.
+It visualizes the robot's pose obtained from the odometry, history of odometry readings, different coordinate systems (like odometry, robot's base, distance sensors, and similar), range, and laser scan measurements.
 
 \section{Drive Calibration}
 
-Two constants are essential in order to have accurate odometry: wheelbase (distance between the contact points of the two wheels), and wheel radius.
+Two constants are essential to have accurate odometry: wheelbase (distance between the contact points of the two wheels), and wheel radius.
 These constants can be measured, but even with the perfect measurements, they are subject to systematic odometry errors, caused by imperfections in the design and mechanical implementation of a mobile robot.
 Typical systematic error is uncertainty about the wheelbase and means that the rubber tires contact the floor not in one point, but rather in a contact area \cite{borenstein_measurement_1996}.
 
 Therefore, we use \texttt{/odom} and \texttt{/cmd\_vel} topics that are previously created to calibrate the two important constants for odometry.
-The technique is inspired by the one presented in \cite{borenstein_measurement_1996}; the robot should move linearly, we can compare anticipated distance (self-reported distance) with the actual distance.
+The technique is inspired by the one presented in \cite{borenstein_measurement_1996}; the robot should move linearly, we can compare the anticipated distance (self-reported distance) with the actual distance.
 The linear movements allow us to adjust the wheel radius.
-For the wheelbase, the robot is rotated a predefined number of rotations; then, it is compared to the actual number of rotations, and wheelbase is adjusted accordingly (see Figure \ref{fig:demos:diff_drive_calibration}).
+For the wheelbase, the robot is rotated for a predefined number of rotations; then, it is compared to the actual number of rotations, and the wheelbase is adjusted accordingly (see Figure \ref{fig:demos:diff_drive_calibration}).
 
 \begin{figure}[H]
     \centering
@@ -59,11 +59,11 @@ A few approaches are considered to meet the goal:
 \begin{itemize}
     \item Utilize the existing \ac{slam} solutions available for \ac{ros2} (\texttt{slam\_toolbox} or \texttt{cartographer}).
     \item Create a simple custom solution.
-    \item Make a bridge to \ac{ros}1 workspace and use \ac{slam} solutions available for \ac{ros}1 (e.g. \texttt{gmapping} is only available for \ac{ros}1).
+    \item Make a bridge to \ac{ros}1 workspace and use \ac{slam} solutions available for \ac{ros}1 (e.g., \texttt{gmapping} is only available for \ac{ros}1).
     \item Port \texttt{gmapping} \ac{slam} solution (that is available only for \ac{ros}1) to \ac{ros2}.
 \end{itemize}
 
-In tests, \texttt{slam\_toolbox} and \texttt{cartographer} were not able to provide accurate mapping due to the scarcity of the distance measurements\footnote{The author of \texttt{slam\_toolbox}, Steve Macenski, explained that modern graph-based \ac{slam} solutions do not provide good results when used with e-puck2 robot (or similar robots with a few distance sensors) like old particle filter based \ac{slam} solutions - \url{https://github.com/SteveMacenski/slam_toolbox/issues/192}.}. Using \texttt{gmapping} through \ac{ros}1 bridge indeed gave a good results.
+In tests, \texttt{slam\_toolbox} and \texttt{cartographer} were not able to provide accurate mapping due to the scarcity of the distance measurements\footnote{The author of \texttt{slam\_toolbox}, Steve Macenski, explained that modern graph-based \ac{slam} solutions do not provide good results when used with e-puck2 robot (or similar robots with a few distance sensors) like old particle filter based \ac{slam} solutions - \url{https://github.com/SteveMacenski/slam_toolbox/issues/192}.}. Using \texttt{gmapping} through \ac{ros}1 bridge indeed gave good results.
 However, complex installation and usage is something we tried to avoid as it is not user-friendly.
 Porting \texttt{gmapping} to \ac{ros2} is feasible, but maintenance of a such complex software would be time intensive.
 
@@ -101,9 +101,9 @@ use Bresenham's line algorithm to write empty space\;
 \end{algorithm}
 \vspace*{.4cm}
 
-The algorithm (see Alg. \ref{alg:demos:mapping_process}) uses a power of \texttt{tf2} package which listens for messages of \texttt{/TfMessage} to determine position of the virtual laser scanner in respect to the odometry frame.
+The algorithm (see Alg. \ref{alg:demos:mapping_process}) uses a power of \texttt{tf2} package which listens for messages of \texttt{/TfMessage} to determine the position of the virtual laser scanner in respect to the odometry frame.
 With a few transformations, it is straightforward to calculate the position of the obstacles on the map.
-To fill the empty space between the robot and the obstacle (white pixels in Figure \ref{fig:demos:mapping}) Bresenham's line algorithm is implemented \cite{borenstein_measurement_1996}.
+To fill the empty space between the robot and the obstacle (white pixels in Figure \ref{fig:demos:mapping}), Bresenham's line algorithm is implemented \cite{borenstein_measurement_1996}.
 
 \begin{figure}[H]
 \centering
@@ -129,14 +129,14 @@ Finally, the result can be observed in the figure above (Figure \ref{fig:demos:m
 \label{sec:demos:navigation}
 
 Another example is navigation.
-For this demo, the Navigation2 community package is integrated.  
+For this demo, the \texttt{navigation2} community package is integrated.  
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{demos/figures/navigation_overview.png}
-    \caption[Architecture of the Navigation2 package]{Architecture of the Navigation2 package\footnotemark}
+    \caption[Architecture of the \texttt{navigation2} package]{Architecture of the \texttt{navigation2} package\footnotemark}
     \label{fig:demos:navigation_overview}
 \end{figure}
-\footnotetext{The image is taken from official Navigation2 GitHub repository available at \url{https://github.com/ros-planning/navigation2}.}
+\footnotetext{The image is taken from the official \texttt{navigation2} GitHub repository available at \url{https://github.com/ros-planning/navigation2}.}
 
 % The package is extremely configurable, including hundreds of parameters.
 % Therefore, it requires a good understanding of the background theoretical concepts to configure it efficiently \cite{zheng_ros_nodate}.
@@ -144,7 +144,7 @@ For this demo, the Navigation2 community package is integrated.
 It uses transforms, maps, and measurements from range finders to control the robot's velocity, effectively avoiding obstacles and converging towards the destination (see Figure \ref{fig:demos:navigation_overview}).
 Based on the provided map, it builds a global cost map used by a planner to find a global path (e.g., using an A star algorithm) to the destination.
 Based on the data from the range finders, it builds a local cost map that is used by the controller server to avoid obstacles locally.
-The controller server is also used to follow the path generated by the planner server, and it usually uses implementation called DWB local planner.
+The controller server is also used to follow the path generated by the planner server, and it usually uses an implementation called DWB local planner.
 The planner considers the robot's maximum rotational and linear velocity and various critics (e.g., goal align and path align), to issue velocity commands \cite{macenski_marathon_2020-1}. 
 
 % TODO: Add RViz2 screenshot

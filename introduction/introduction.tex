@@ -2,7 +2,8 @@
 \label{chap:introduction}
 \shorttitle{\nameref{chap:introduction}}
 
-This project's motivation is to close the loop between the simulation and the physical world in a robotics application and allow an effortless algorithm to different simulated robots.
+This project's motivation is to close the loop between the simulation and the physical world in a robotics application.
+Furthermore, the motivation is also to allow an effortless controller transfer to different simulated robots.
 The project aims to utilize \ac{ros2}, the second iteration of a popular robotics framework, to develop a standard interface for a range of different robots including physical and simulated e-puck2 robots.
 
 \section{Problem Statement}
@@ -17,7 +18,8 @@ In the world of diverse hardware solutions for robots, it is hard to create a mo
 For example, navigation, \ac{slam}, and localization are only a few algorithms widely used in mobile robotics, and many mobile robots could reuse that.
 The researchers need modular, reusable software to share robot controllers among colleagues.
 Then, the researchers can evaluate and compare the controller on different robots \cite{vaughan_really_2007}.
-As for the previous challenge, the solution must be easily integrated into the simulation and not cause significant computational overhead.
+As for the previous challenge, the solution must be easily integrated into the simulation.
+
 In order to demonstrate the flexibility of the proposed solution, it will be implemented for the e-puck2 physical and simulated robot.
 The solution also has to be scaled to the Khepera IV simulated robot and potentially other simulated robots.
 
@@ -26,13 +28,12 @@ The solution also has to be scaled to the Khepera IV simulated robot and potenti
 As described in the previous section, two challenges in robotics have to be tackled in this thesis.
 The first is closing the loop between the simulation and the physical world, and the second is software reuse between different robots.
 
-
 From the software point of view, solving those problems can be addressed by defining a common \ac{api} for the physical and simulated robot.
-\ac{ros} is often used as a meta-operating system for this purpose as the \ac{api} can be defined in \ac{ros}.
+\ac{ros} is often used as a meta-operating system for this purpose as the common \ac{api} can be defined in \ac{ros}.
 The newest version of \ac{ros}, \ac{ros2}, includes useful improvements relevant to the project, and it is about to replace the old version completely.
 Therefore, the proposed solution is based on developing \ac{ros2} nodes that closely interact with the hardware and the Webots\footnote{Webots is a desktop application, developed at \ac{epfl}, used to simulate robots.
 It will be more closely introduced in the following chapter.} simulation - \ac{ros2} driver.
-As a result, a user should have a development workflow, as shown in Fig. \ref{fig:introduction:desired_workflow}.
+As a result, a user should have a development workflow, as shown in Figure \ref{fig:introduction:desired_workflow}.
 
 \begin{figure}[H]
     \centering
@@ -45,17 +46,17 @@ As a result, a user should have a development workflow, as shown in Fig. \ref{fi
     \label{fig:introduction:desired_workflow}
 \end{figure}
 
-In Fig. \ref{fig:introduction:desired_workflow} the user develops a robot controller called \texttt{custom controller}.
+In Figure \ref{fig:introduction:desired_workflow}, the user develops a robot controller called \texttt{custom controller}.
 From the user's perspective, the controller is supposed to be the same in each scenario.
-First, the user should start by developing the controller on PC and testing it in the simulation.
-After the user is satisfied with the robot's behavior in simulation, the controller can still be executed on the PC, but now it can control the physical robot.
-If the robot's behavior is not desired, the user can improve the simulation model and test it again in the simulation, reducing the reality gap.
-Once everything works as expected, the user should move the controller to the robot.
-Here, it is possible to, for example, hit the computational limit of the on-board computer. In this case the controller should then be edited and tested in simulation again, moving back to the on-board computer once it is ready.
-Finally, the controller can be shared with the other researchers to evaluate it on different robots or to further improve it.
+First, the user should start by developing the controller on a PC and testing it in the simulation (scenario A).
+After the user is satisfied with the robot's behavior in simulation, the controller can still be executed on the PC, but now it can control the physical robot (scenario B).
+If the robot's behavior is not desired, the user can improve the simulation model and test it again in the simulation (scenario A), reducing the reality gap.
+Once everything works as expected, the user should move the controller to the robot (scenario C).
+Here, it is possible to, for example, hit the computational limit of the on-board computer. In this case, the controller should then be edited and tested in simulation again (scenario B), moving back to the on-board computer once it is ready.
+Finally, the controller can be shared with the other researchers to evaluate it on different robots or to further improve it (scenario D).
 
 The project has to be done in three phases.
-First, a specific \ac{ros2} nodes for an e-puck2 simulated and physical robot have to be developed.
+First, specific \ac{ros2} nodes for an e-puck2 simulated and physical robot have to be developed.
 Second, examples that utilize the nodes have to be created. 
 The purpose of this phase is to evaluate the nodes and to give the users usage examples.
 Finally, in the third phase, the specific \ac{ros2} node for simulated e-puck2 robot has to be generalized to support other robots, focusing on Khepera IV and TurtleBot3 robots.

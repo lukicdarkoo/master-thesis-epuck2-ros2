@@ -11,6 +11,7 @@
 \usepackage{dirtree}
 \usepackage{amsmath}
 \usepackage{appendix}
+\usepackage[htt]{hyphenat}
 \usepackage[linesnumbered, ruled, vlined]{algorithm2e}
 \usepackage[table,x11names]{xcolor}
 \usepackage[english]{./_template/disal_report_template}
@@ -24,6 +25,10 @@
 
 % Command `keywords`
 \providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1}
+
+% Colors
+\definecolor{llgray}{rgb}{0.9,0.9,0.9}
+
 
 \title{ROS2 Programming Interface for the E-puck2 Robot}
 \shorttitle{ROS2 Programming Interface for the E-puck2 Robot}
@@ -41,26 +46,45 @@
 
 \begin{document}
 
+% First page
 \maketitle
 
+% Empty page
 \newpage
 \
 \newpage
 
+% Abstract
 \input{abstract}
 
+% Empty page
+\newpage
+\
+\newpage
+
+% Acknowledgments
+\input{acknowledgments}
+
+% Empty page
+\newpage
+\
+\newpage
+
+% Table of Contents
 \newpage
 \tableofcontents
 \newpage
 
+% Acronyms
 \printacronyms
 
-
-
+% List of Figures
 \listoffigures
 
+% List of Tables
 \listoftables
 
+% Content
 \input{introduction/introduction}
 \input{background/background}
 \input{simulation/simulation}
@@ -70,6 +94,7 @@
 \input{results/results}
 \input{conclusion/conclusion}
 
+% Bibliography
 \cleardoublepage
 \addcontentsline{toc}{chapter}{Bibliography}
 \bibliography{_references}
@@ -77,6 +102,7 @@
 \bibliographystyle{IEEEtran}
 %\bibliographystyle{alpha}
 
+% Appendix
 \input{appendix/appendix}
 
 \end{document}
