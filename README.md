@@ -6,8 +6,13 @@
 
 This is a report for my master's project about [ROS2](https://index.ros.org/doc/ros2/) programming interface for the [e-puck2 robot](https://www.gctronic.com/doc/index.php/e-puck2).
 
-> This project's motivation is to close the loop between the simulation and the physical world in a robotics application and allow an effortless algorithm transfer from a robot to a robot in general.
-The project aims to utilize ROS2, the second iteration of a popular robotics framework, to develop a standard interface for e-puck2 physical and simulated robots and many other simulated robots.
+> Robotics simulations have been proven to be a powerful tool for developing a robot controller as they are easy to set up, cheap, fast, and convenient to use.
+However, the final objective is usually to deploy the controller on the real robots or even to run the controller on an arbitrary robot.
+This thesis presents a ROS2 driver for e-puck2 physical robots and a generalized ROS2 driver for Webots simulated robots. 
+The ROS2 drivers expose a nearly identical ROS2 interface that allows a controller to interact in the same way with the physical e-puck2 and the simulated robots without changes.
+Effectively, it allows the controller developers a seamless transition between simulated and physical e-puck2 robots or other simulated robots.
+The ROS2 drivers are validated in multiple scenarios, like navigation and mapping.
+The results prove that researchers can quickly validate their ROS2 controllers on the e-puck2 physical or simulated robot and other Webots simulated robots.
 
 ## Code
 
