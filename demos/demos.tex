@@ -101,7 +101,7 @@ use Bresenham's line algorithm to write empty space\;
 \end{algorithm}
 \vspace*{.4cm}
 
-The algorithm (see Alg. \ref{alg:demos:mapping_process}) uses a power of \texttt{tf2} package which listens for messages of \texttt{/TfMessage} to determine the position of the virtual laser scanner in respect to the odometry frame.
+The algorithm (see Algorithm \ref{alg:demos:mapping_process}) uses a power of \texttt{tf2} package which listens for messages of \texttt{/TfMessage} to determine the position of the virtual laser scanner in respect to the odometry frame.
 With a few transformations, it is straightforward to calculate the position of the obstacles on the map.
 To fill the empty space between the robot and the obstacle (white pixels in Figure \ref{fig:demos:mapping}), Bresenham's line algorithm is implemented \cite{borenstein_measurement_1996}.
 

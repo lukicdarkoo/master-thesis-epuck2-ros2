@@ -4,9 +4,9 @@
 
 This chapter analyzes whether the \ac{ros2} driver for the e-puck2 physical robot and the \ac{ros2} universal driver provide expected behavior. The analysis will be shown through three pillars:
 \begin{itemize}
-    \item Verify whether the e-puck2 physical and simulated robots have a similar behavior with the same controller.
-    \item Verify whether simulated e-puck2 and Khepera IV robots have a similar behavior with the same controller.
-    \item Verify whether the \ac{ros2} universal driver works properly with the other robots such as TIAGo++ and TurtleBot3 Burger.
+    \item Verification whether the e-puck2 physical and simulated robots have a similar behavior with the same controller.
+    \item Verification whether simulated e-puck2 and Khepera IV robots have a similar behavior with the same controller.
+    \item Verification whether the \ac{ros2} universal driver works properly with the other robots such as TIAGo++ and TurtleBot3 Burger.
 \end{itemize}
 
 % This chapter quantifies the difference between the simulated e-puck2 and the physical robot's performance, also including the Khepera IV simulated robot, showing that the \ac{ros2} interface is appropriately implemented. 
@@ -14,8 +14,8 @@ This chapter analyzes whether the \ac{ros2} driver for the e-puck2 physical robo
 
 \section{Comparison of Physical and Simulated E-puck2}
 
-In this section, we want to verify whether the \ac{ros2} interface is the for the physical and simulated e-puck2 robots.
-In that respect, endpoints of the \ac{ros2} interface of the physical and the simulated e-puck2 robots will be individually compared.
+In this section, we want to verify whether the \ac{ros2} interface is the same for the physical and simulated e-puck2 robots.
+% In that respect, endpoints of the \ac{ros2} interface of the physical and the simulated e-puck2 robots will be individually compared.
 The difference of the \ac{ros2} interfaces will then be quantified with \ac{ros2} navigation and mapping controllers.
 
 \subsection{\ac{ros2} Interface Endpoints Comparison}
@@ -23,10 +23,10 @@ The difference of the \ac{ros2} interfaces will then be quantified with \ac{ros2
 % First, the readings from the sensors need to be compared. Most of the sensors of the e-puck2 simulated robot are calibrated before this project has taken place.
 % Therefore, a quick visual inspection was enough to verify that the sensors have the desired output.
 The \ac{ros2} interfaces for physical and simulated robots are very similar, image-related topics being the only difference.
-The physical e-puck2 robot advertises \texttt{/image\_raw/compressed} topic of type \texttt{sensor\_msgs/CompressedImage} and the robot uses it to transfer compressed images over the network.
+The physical e-puck2 robot advertises additional \texttt{/image\_raw/compressed} topic of type \texttt{sensor\_msgs/CompressedImage} and the robot uses it to transfer compressed images over the network.
 
 \subsection{Camera Performance Comparison}
-This benchmark has to compare different \ac{ros2} camera node implementations on the physical e-puck2 robot, at which resolution and \ac{fps} it can operate.
+In this section, we want to compare different \ac{ros2} camera node implementations on the physical e-puck2 robot, analyzing at which resolution and \ac{fps} it can operate.
 The analysis aims to determine a suitable way to transport the images from Raspberry Pi Zero W and identify bottlenecks.
 
 In terms of compression, the images are transported as raw, \ac{jpeg} compressed and as a Theora compressed video stream\footnote{Description of the Theora technology is available at the official website - \url{https://www.theora.org/}}.
@@ -72,9 +72,9 @@ Please note that the experiments have been done under the following conditions:
     \item Package \texttt{v4l2\_camera} is used to read and transport images. The package works as following:
         \begin{itemize}
             \item the images are read directly from memory using \texttt{mmap()} in YUV422\_YUY2 format (native camera format),
-            \item the images are converted to \ac{rgb} color encoding using \texttt{cv\_bridge} package
+            \item the images are converted to \ac{rgb} color encoding using \texttt{cv\_bridge} package,
             \item the images are transported using \texttt{image\_transport}, \texttt{image\_transport\_plugins} (equipped with \texttt{compressed\_image\_transport} and \texttt{theora\_image\_transport}) with default configuration,
-            \item the package is alternated to accommodate image resize for this experiment and the image resizing is done just before YUV422\_YUY2 to \ac{rgb} conversion
+            \item the package is alternated to accommodate image resize for this experiment and the image resizing is done just before YUV422\_YUY2 to \ac{rgb} conversion,
             \item the package is implemented in C++ with attention to memory management (the image is cloned only when necessary).
         \end{itemize}
     \item Camera is configured to 15 \ac{fps}.
@@ -120,10 +120,11 @@ Since the network is not the bottleneck here, but \ac{cpu}, the effect of anothe
 To improve \ac{jpeg} compression performance and effectively increase the \ac{fps}, the compression is offloaded to \ac{gpu}.
 Comparison of \ac{jpeg} image compression performed on \ac{cpu} and \ac{gpu} is depicted in Figure \ref{fig:results:camera_load}.
 It shows that even though there is no compression involved, just image publishing, the images are too large for Raspberry Pi Zero W to be transmitted efficiently, and the process allocates a lot of \ac{cpu} time.
-In contrast, there the images compressed with \ac{gpu} are the small and cumbersome process of compression is offloaded to \ac{gpu}, leaving the \ac{cpu} with a minimal load.
+In contrast, the images compressed with \ac{gpu} are the small and it is much easier for the \ac{cpu} to deal with the images (pack them to \ac{ros2} messages and transfer them to the other nodes).
 
 \subsection{Performance Comparison in Mapping}
-In Section \ref{sec:demos:mapping}, a custom \ac{ros2} node for mapping is described. Here, it will be used by the e-puck2 physical and simulated robot for performance comparison. In that purpose, a physical map is created, as well as its digital copy in Webots (see Figure \ref{fig:results:map}).
+In Section \ref{sec:demos:mapping}, a custom \ac{ros2} node for mapping is described. Here, the custom \ac{ros2} mapping node will be used by the e-puck2 physical and simulated robot for performance comparison.
+In that purpose, a physical map is created, as well as its digital copy in Webots (see Figure \ref{fig:results:map}).
 
 \begin{figure}[H]
 \centering
@@ -156,7 +157,7 @@ All maps are saved as pictures, and the comparison of the maps is shown in Figur
 \end{figure}
 
 One notices, that the quality of the maps generated in the simulation and the physical robot are similar.
-However, to quantitatively compare if the quality of the maps we use \ac{iou}:
+However, to quantitatively compare the quality of the maps we use \ac{iou}:
 
 \begin{equation}
     \texttt{IoU} = \frac{\texttt{Area of Overlap}}{\texttt{Area of Union}}
@@ -186,7 +187,7 @@ The \ac{iou} gives us the results shown in Table \ref{tab:results:map_iou}.
 \end{table}
 
 The table shows that the quality of the maps is very similar.
-However, to compare whether the types of errors are similar in both maps, you can check Figure \ref{fig:results:map_features}.
+Furthermore, to compare whether the types of errors are similar in both maps, you can check Figure \ref{fig:results:map_features}.
 
 \begin{figure}[H]
     \centering
@@ -200,7 +201,7 @@ Those three types of errors are very similar on both maps.
 \begin{itemize}
     \item Error \#1: Sparse walls are a result of a low sampling rate. The robot rotates too fast to map all obstacles.
     \item Error \#2: Rounded corners are result of \ac{tof}' sensor wide \ac{fov}. The sensor doesn't measure the distance to the point, but rather it averages distance to all obstacles in its \ac{fov}.
-    \item Error \#3: The invisible walls are also caused by \ac{tof}' sensor wide \ac{fov}. While the robot rotates, the distance to the obstacles gets averaged.
+    \item Error \#3: The invisible walls are also caused by \ac{tof}' sensor wide \ac{fov}. While the robot rotates, the distance measurements to the obstacles get averaged.
 \end{itemize}
 
 This experiment shows that even in more complex scenarios such as mapping, the same controller gives very similar results.
@@ -278,7 +279,7 @@ Similarly to the previous navigation comparison the result is shown in Figure \r
 
 \section{Benefits of Generalized \ac{ros2} Interface for Webots}
 
-Generalized \ac{ros2} driver on e-puck2 robot has produces the same \ac{ros2} interface as a specific \ac{ros2} driver given in Chapter \ref{chap:simulation}.
+Generalized \ac{ros2} driver on e-puck2 robot produces the same \ac{ros2} interface as a specific \ac{ros2} driver given in Chapter \ref{chap:simulation}.
 Therefore, in this section, a brief overview on using the generalized \ac{ros2} driver with other robots will be given.
 
 \subsection{Khepera IV Driver Analysis}

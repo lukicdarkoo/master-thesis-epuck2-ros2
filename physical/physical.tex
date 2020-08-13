@@ -155,7 +155,7 @@ However, as the \ac{ros2} driver included more sensors, the \ac{cpu} load was to
 \end{figure}
 \footnotetext{The exact command to measure the load is \texttt{psrecord \$(pgrep epuck2\_driver) --interval 1 --plot plot.pdf --duration 60}}
 
-Figure \ref{fig:physical:py_vs_cpp} shows performances of two \ac{ros2} nodes with the same set of features, but in different programming languages, Python and C++.
+Figure \ref{fig:physical:py_vs_cpp} shows performances of two \ac{ros2} nodes with the same set of features, but implemented with different programming languages, Python and C++.
 More precisely, they both publish odometry data, measurements from eight distance sensors (including the virtual laser scanner), and they are both subscribed to the velocity control topic.
 In the figure, we can observe that \ac{cpu} usage is three times lower, while \ac{ram} is almost two times lower for C++.
 This analysis in the early stage of implementation steered the development towards C++\footnote{One of the bottlenecks was in the \ac{ros2} client library for Python (\texttt{rclpy}) related to timer implementation - \url{https://github.com/ros2/rclpy/issues/520}. Fixing it improved the performances, but C++ implementation was still more efficient.}.
@@ -216,12 +216,12 @@ The node packs it into the corresponding messages type and publishes it.
 \end{figure}
 
 Figure \ref{fig:physical:camera_ros_images} shows a typical flow of raw, compressed, and uncompressed images within \ac{ros2} application.
-The general idea is to make a compromise between network utilization (less bandwidth is used if compressed images are transferred) and \ac{cpu} load (it less \ac{cpu} intensive to avoid image compression).
+The general idea is to make a compromise between network utilization (less bandwidth is used if compressed images are transferred) and \ac{cpu} load (it is less \ac{cpu} intensive to avoid image compression).
 Therefore, the camera node advertises two topics, one with \acs{rgb} (raw) images and the other with \acs{jpeg} (compressed) images.
 A user can subscribe to any of those two, and the node will start publishing corresponding images to it.
 Usually, the optimal approach is to publish \ac{rgb} images locally and \acs{jpeg} images over the network.
 The \ac{rgb} images are consumed normally, but \acs{jpeg} images have to be received by an intermediate node (usually performed by \ac{ros2} node called \texttt{image\_transport/republish}), uncompressed and published locally.
-The \texttt{image\_transport/republish} node supplies all nodes available on the workstation.
+The \texttt{image\_transport/republish} node supplies all nodes available on the workstation with uncompressed images.
 It is an especially convenient solution when there are many nodes on the workstation as the images are transferred only once through the network (nodes on the workstation consume images from the \texttt{image\_transport/republish} node).
 
  
@@ -265,7 +265,7 @@ $ T_{ticks} \leftarrow 2^{16} N_{overflow} + C_{ticks} $\;
 \end{algorithm}
 \vspace*{.4cm}
 
-By applying Alg. \ref{alg:physical:overflow}, in $ T_{ticks} $ a total number of ticks will be stored, taking overflows into the consideration. It is important to set $ N_{grace} $ reasonably big such that $ |P_{ticks} - C_{ticks}| > N_{grace} $ is only true when the overflow occurs.
+By applying Algorithm \ref{alg:physical:overflow}, in $ T_{ticks} $ a total number of ticks will be stored, taking overflows into the consideration. It is important to set $ N_{grace} $ reasonably big such that $ |P_{ticks} - C_{ticks}| > N_{grace} $ is only true when the overflow occurs.
 
 \section{Software Quality Assurance}
 As a part of ROSIN\footnote{The Software Quality Assurance propositions of the ROSIN project can be fount at \url{https://www.rosin-project.eu/software-quality-assurance}.}, this master project has to incorporate software engineering best practices such as continuous integration \cite{meyer_continuous_2014}, unit testing and code reviews. Those practices are fully utilized throughout the whole project, and they will be briefly explained here.

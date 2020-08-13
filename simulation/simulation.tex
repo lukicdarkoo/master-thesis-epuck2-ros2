@@ -15,7 +15,7 @@ The Webots controller controls actuators and reads data from sensors available i
 The controller is a "brain" of the robot; it makes the robot move and senses the environment.
 It consists of two parts, the Webots \ac{api}, which communicates with the simulation and user-defined code that uses Webots \ac{api} to control the robot.
 The Webots \ac{api} communicates with the Webots simulation through pipes and shared memory, a type of inter-process communication \cite{kashyian_portable_2008}.
-Therefore, there are two processes that run independently, Webots controller and Webots simulation (see Fig. \ref{fig:simulation:webots_user_code_and_api}).
+Therefore, there are two processes that run independently, Webots controller and Webots simulation (see Figure \ref{fig:simulation:webots_user_code_and_api}).
 
 \begin{figure}[H]
     \centering
@@ -24,11 +24,11 @@ Therefore, there are two processes that run independently, Webots controller and
     \label{fig:simulation:webots_user_code_and_api}
 \end{figure}
 
-In this chapter, a logic that performs translation from Webots \ac{api} to \ac{ros2} \ac{api} will be implemented as a Webots controller (block \textit{User-specific Code} in Fig. \ref{fig:simulation:webots_user_code_and_api}).
+In this chapter, a logic that performs translation from Webots \ac{api} to \ac{ros2} \ac{api} will be implemented as a Webots controller (block \textit{User-specific Code} in Figure \ref{fig:simulation:webots_user_code_and_api}).
 Therefore, a block \textit{Webots Controller} from the figure will be referenced as \ac{ros2} driver in the further text.
 
 \section{Webots within \ac{ros2}}
-As \ac{ros2} driver is defined, we should clarify how the \ac{ros2} driver and Webots simulation can be launched within a \ac{ros2} application. 
+As the \ac{ros2} driver is defined, we should clarify how the \ac{ros2} driver and Webots simulation can be launched within a \ac{ros2} application. 
 The straightforward way to launch the \ac{ros2} driver and Webots simulation is the following:
 \begin{itemize}
     \item put \ac{ros2} libraries to the environment variable \texttt{PATH},
@@ -49,7 +49,7 @@ The launch files are described with Python scripts, and there are three importan
     For example, when a process is closed, it will emit an event on which we can close the whole \ac{ros2} application.
 \end{itemize}
 
-Using those three concepts a minimal launch file containing Webots and \ac{ros2} driver is created (see Fig. \ref{fig:simulation:webots_launch}).
+Using those three concepts a minimal launch file containing Webots and \ac{ros2} driver is created (see Figure \ref{fig:simulation:webots_launch}).
 
 \begin{figure}[H]
     \centering
@@ -71,7 +71,7 @@ This whole implementation is later completely hidden from the user (introduced i
 In this section, the implementation of \ac{ros2} driver for the simulated e-puck2 robot is explained.
 Please note that only the first section (Section \ref{sec:simulation:odometry_velocity}) will provide the comprehensive explanation of the respective topic.
 The other sections will only briefly cover the implementation details as the \ac{ros2} support does not differ significantly from sensor to sensor.
-It is essential to choose a suitable message type and thoroughly format data accordingly.
+% It is essential to choose a suitable message type and thoroughly format data accordingly.
 
 \subsection{Differential Drive}
 \label{sec:simulation:odometry_velocity}
@@ -81,8 +81,7 @@ With the dead reckoning method, the change in position can be accumulated, and, 
 In \ac{ros2}, each sensor used for odometry should publish messages of type \texttt{nav\_msgs/Odometry}, and messages from different sensors later can be fused to increase accuracy. 
 
 In the scope of this project, only wheel encoders are used for odometry.
-Furthermore, the e-puck2 does not have encoders but step motors.
-However, since we can control steps precisely, that data can be used for odometry calculation.
+Even though the e-puck2 does not have encoders but step motors, we control steps precisely, and therefore, that information we can use to calculate odometry.
 
 \begin{figure}[H]
     \centering
@@ -107,9 +106,9 @@ However, since we can control steps precisely, that data can be used for odometr
     \label{fig:simulation:odometry}
 \end{figure}
 
-In Fig. \ref{fig:simulation:odometry}, odometry format proposed by \ac{ros2} and used by the community packages is given. It requires \texttt{geometry\_msgs/Pose} (position and orientation) of the robot to be specified, as well as \texttt{geometry\_msgs/Twist} (linear and angular velocity).
+In Figure \ref{fig:simulation:odometry}, odometry format proposed by \ac{ros2} and used by the community packages is given. It requires \texttt{geometry\_msgs/Pose} (position and orientation) of the robot to be specified, as well as \texttt{geometry\_msgs/Twist} (linear and angular velocity).
 
-First we express velocity of left ($v_left$) and right ($v_right$) wheel by multiplying wheel radius ($R$) with angular velocity:
+First we express velocity of left ($v_{left}$) and right ($v_{right}$) wheel by multiplying wheel radius ($R$) with angular velocity:
 \begin{equation}
 \begin{aligned}
     v_{left} = R \frac{\gamma_{left}(n) - \gamma_{left}(n-1)}{\Delta t} \\
@@ -155,7 +154,7 @@ It can simply be integrated using Euler method expressed in general terms as:
 This method would be computationally cheap, but not as accurate as for example fourth order of Runge-Kutta \cite[p. 40]{noauthor_solving_1993}.
 The choice of the method for the numerical integration is mainly based on sample rate we perform with the pi-puck extension.
 In the case of e-puck2 physical robot, communication with the on-board \ac{mcu} is configured exchange data with pi-puck extension at around 20Hz.
-Considering the slow sample rate and the computational power of the Raspberry Pi Zero to handle floating-point operations, it is reasonable to choose the fourth order of Runge-Kutta over Euler method and trade computation resources for better accuracy.
+Considering the slow sample rate and the computational power of the Raspberry Pi Zero W to handle floating-point operations, it is reasonable to choose the fourth order of Runge-Kutta over Euler method and trade computation resources for better accuracy.
 Therefore, we express the numerical integration as follows:
 
 
@@ -198,7 +197,7 @@ Therefore, we express the numerical integration as follows:
 \end{aligned}
 \end{equation}
 
-Notice in Fig. \ref{fig:simulation:odometry} that the orientation is represented as a quaternion while our orientation is represented Euler angles. To convert the Euler angles to quaternions we reference to \cite[p. 12]{diebel_representing_2006}: 
+Notice in Figure \ref{fig:simulation:odometry} that the orientation is represented as a quaternion while our orientation is represented in Euler angles. To convert the Euler angles to quaternions we reference to \cite[p. 12]{diebel_representing_2006}: 
 
 \begin{equation}
     \bm{q}(\alpha_x, \alpha_y, \theta) = \begin{bmatrix}
@@ -210,11 +209,11 @@ Notice in Fig. \ref{fig:simulation:odometry} that the orientation is represented
 \end{equation}
 in which we can neglect $ \alpha_x $ and $ \alpha_y $ as those two elements are always 0 for differentially-wheeled robots.
 
-At this point, the obtained $ x, y, \bm{q}, \dot{x}, \dot{y} $ and $ \dot{\theta} $ are packed in \texttt{nav\_msgs/Odometry} (see Fig. \ref{fig:simulation:odometry}) and published periodically at 20Hz.
+At this point, the obtained $ x, y, \bm{q}, \dot{x}, \dot{y} $ and $ \dot{\theta} $ are packed in \texttt{nav\_msgs/Odometry} (see Figure \ref{fig:simulation:odometry}) and published periodically at 20Hz.
 
 With \texttt{nav\_msgs/Odometry} messages the rest of the \ac{ros2} is aware of robot's odometry data.
 However, in addition to odometry data, the odometry frame has to be defined as well to explain the robot's position with respect to the odometry frame.
-For that purpose \ac{ros2} defines transform messages of type \texttt{geometry\_msgs/TransformStamped} (see Fig. \ref{fig:simulation:transform}).
+For that purpose \ac{ros2} defines transform messages of type \texttt{geometry\_msgs/TransformStamped} (see Figure \ref{fig:simulation:transform}).
 In short, transform messages are used to create a transform tree to keep track of multiple coordinate frames over time. 
 Keeping track of the coordinate frames is an essential aspect of \ac{ros} in general, and it will be properly explained in Chapter \ref{chap:generalization} in which it will be extensively utilized.
 
@@ -233,7 +232,7 @@ Keeping track of the coordinate frames is an essential aspect of \ac{ros} in gen
     \caption{\texttt{geometry\_msgs/TransformStamped} message type definition in \ac{ros2}}
     \label{fig:simulation:transform}
 \end{figure}
-However, to control the robot's velocity a message of type \texttt{geometry\_msgs/Twist} (see Fig. \ref{fig:simulation:twist}) has to be utilized.
+However, to control the robot's velocity a message of type \texttt{geometry\_msgs/Twist} (see Figure \ref{fig:simulation:twist}) has to be utilized.
 Therefore, the node has to subscribe to the topic and set the wheels' angular speed accordingly.
 
 \begin{figure}[H]
@@ -257,7 +256,7 @@ The target velocity of the left ($v_{left}$) and right ($v_{right}$) can be obta
     & v_{right} = v_{ref} - L \frac{\omega_{ref}}{2}
 \end{aligned}
 \end{equation}
-where $ v_{ref}  $ is reference linear velocity (available in the \ac{ros2} message \texttt{.linear.x}) and $ \omega_{ref} $ angular reference velocity (available in the \ac{ros2} message \texttt{.angular.z}). Webots expect the velocity to be given in radians per second (rad/s):
+where $ v_{ref}  $ is a reference linear velocity (available in the \ac{ros2} message \texttt{.linear.x}) and $ \omega_{ref} $ angular reference velocity (available in the \ac{ros2} message \texttt{.angular.z}). Webots expect the velocity to be given in radians per second (rad/s), therefore:
 \begin{equation}
 \begin{aligned}
     & \omega_{left} = \frac{v_{left}}{R} \\
@@ -271,7 +270,7 @@ Messages of type \texttt{geometry\_msgs/TransformStamped} are published to topic
 Those topic names follow \ac{ros2} conventions for topic naming and can be changed using \ac{ros2} remapping\footnote{Tutorial on \ac{ros2} remapping can be found at \url{https://index.ros.org/doc/ros2/Tutorials/Node-arguments/\#id1}.}. 
 
 \subsection{Distance Sensors}
-E-puck2 is equipped with 8 infra-red sensors and one \ac{tof} sensor (see Fig. \ref{fig:simulation:distance_sensors}). These sensors are modeled as \texttt{DistanceSensor}\footnote{More information about \texttt{DistanceSensor} nodes is available \url{https://cyberbotics.com/doc/reference/distancesensor}.} in Webots.
+E-puck2 is equipped with 8 infra-red sensors and one \ac{tof} sensor (see Figure \ref{fig:simulation:distance_sensors}). These sensors are modeled as \texttt{DistanceSensor}\footnote{More information about \texttt{DistanceSensor} nodes is available \url{https://cyberbotics.com/doc/reference/distancesensor}.} in Webots.
 
 \begin{figure}[H]
     \centering
@@ -288,7 +287,7 @@ Those messages are commonly used by \ac{ros2} community packages like \texttt{na
 The message type requires an array of measurements at angles that are equally distanced from each other. 
 
 Therefore, even though there is no \ac{lidar} available on the e-puck2, it is possible to emulate it using available distance sensors.
-Since the distance sensors are not evenly distributed, virtual distance sensors are added to fill space between the actual distance sensors (see Fig. \ref{fig:simulation:laserscan}).
+Since the distance sensors are not evenly distributed, virtual distance sensors are added to fill space between the actual distance sensors (see Figure \ref{fig:simulation:laserscan}).
 These virtual distance sensors always give measurements of 0 meters which corresponds to invalid measurement (as minimum valid range in \texttt{sensor\_msgs/LaserScan} message is defined to be greater than 0 meters).
 % TODO: Explain https://answers.ros.org/upfiles/14177210732958238.jpg
 
